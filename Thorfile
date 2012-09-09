@@ -1,4 +1,7 @@
-﻿class Generate < Thor::Group
+﻿require File.expand_path('lib/thor/shell/basic', File.dirname(__FILE__))
+require File.expand_path('lib/thor/actions/file_manipulation', File.dirname(__FILE__))
+
+class Generate < Thor::Group
   
   argument :name
   class_option :base_dir, :default => ENV['GENERATORS_BASE_DIR']
