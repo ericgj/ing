@@ -12,12 +12,12 @@ class Generate < Thor::Group
     base = options[:base_dir] || 
            ask('Where do you want to look for generator templates?')
     file = File.expand_path("#{base}/#{name}/Thorfile", Dir.pwd)
-    say "Loading #{file}", :yellow
+    say "Loading #{file}"
     Kernel.load file
   end
   
   def execute
-    say "Executing #{name}:generate with options #{self.options.inspect}", :yellow
+    say "Executing #{name}:generate with options #{self.options.inspect}"
     invoke "#{name}:generate", [], self.options
     say "Finished #{name}:generate", :green
   end
