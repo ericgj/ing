@@ -12,7 +12,6 @@ class Generate < Thor::Group
     file = File.expand_path("#{base}/#{name}/Thorfile", Dir.pwd)
     say "Loading #{file}", :yellow
     Kernel.load file
-    say "Loaded", :green
   end
   
   def execute
