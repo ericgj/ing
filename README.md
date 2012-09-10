@@ -1,8 +1,7 @@
 ﻿# Ing
 ## Vanilla ruby command-line scripting.
 
-or gratuitous backronym:
-### _I_ _N_ eed a _G_ enerator! 
+or gratuitous backronym: <b>I</b> <b>N</b>eed a <b>G</b>enerator! 
 
 Note this is a work-in-progress, not quite ready for use.
 
