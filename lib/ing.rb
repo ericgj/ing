@@ -1,52 +1,53 @@
-﻿require File.expand_path('ing/lib_trollop', File.dirname(__FILE__))
-require File.expand_path('ing/dispatcher', File.dirname(__FILE__))
-require File.expand_path('ing/shell', File.dirname(__FILE__))
-require File.expand_path('ing/files', File.dirname(__FILE__))
-require File.expand_path('ing/commands/boot', File.dirname(__FILE__))
-require File.expand_path('ing/commands/generate', File.dirname(__FILE__))
+﻿['ing/lib_trollop',
+ 'ing/dispatcher',
+ 'ing/shell',
+ 'ing/files',
+ 'ing/commands/boot',
+ 'ing/commands/generate'
+].each do |f| 
+  require File.expand_path(f, File.dirname(__FILE__)) 
+end
 
 module Ing
+  extend self
   
-  class << self
-    attr_writer :namespace, :shell_class
-    def namespace
-      @namespace ||= self
+  attr_writer :namespace, :shell_class
+  def namespace
+    @namespace ||= self::Commands
+  end
+  def shell_class
+    @shell_class ||= Shell::Basic
+  end
+      
+  # dispatch to boot class (if specified, or Boot otherwise), which 
+  # dispatches the command after parsing args. 
+  # Note boot dispatch happens within Ing namespace.
+  def run(argv=ARGV)
+    job = nil
+    booter = extract_boot_class!(argv) || ["Boot"]
+    inside_namespace(self::Commands) do
+      job = Dispatcher.new(booter, "call", *argv)
     end
-    def shell_class
-      @shell_class ||= Shell::Basic
+    job.dispatch
+  end
+      
+  def inside_namespace(ns)
+    saved_ns, self.namespace = namespace, ns
+    yield
+    self.namespace = saved_ns
+  end
+  
+  private
+  
+  def extract_boot_class!(args)
+    c = to_classes(args.first)
+    if (Ing.const_defined?(c.first) rescue nil)
+      args.shift; c
     end
-        
-    # dispatch to boot class (if specified, or Boot otherwise), which 
-    # dispatches the command after parsing args. 
-    # Note boot dispatch happens within Ing namespace.
-    def run(argv=ARGV)
-      job = nil
-      booter = extract_boot_class!(argv) || ["Boot"]
-      inside_namespace(self) do
-        job = Dispatcher.new(booter, "call", *argv)
-      end
-      job.dispatch
-    end
-        
-    def inside_namespace(ns)
-      saved_ns, self.namespace = namespace, ns
-      yield
-      self.namespace = saved_ns
-    end
-    
-    private
-    
-    def extract_boot_class!(args)
-      c = to_classes(args.first)
-      if (Ing.const_defined?(c.first) rescue nil)
-        args.shift; c
-      end
-    end
+  end
 
-    def to_classes(str)
-      str.split(':').map {|c| c.gsub(/(?:\A|_+)(\w)/) {$1.upcase} }
-    end
-    
+  def to_classes(str)
+    str.split(':').map {|c| c.gsub(/(?:\A|_+)(\w)/) {$1.upcase} }
   end
 
 end
