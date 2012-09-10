@@ -16,8 +16,9 @@ module Ing
       @shell_class ||= Shell::Basic
     end
         
-    # dispatch to boot:call, which dispatches the command after parsing args
-    # resets globals afterwards
+    # dispatch to boot class (if specified, or Boot otherwise), which 
+    # dispatches the command after parsing args. 
+    # Note boot dispatch happens within Ing namespace.
     def run(argv=ARGV)
       job = nil
       booter = extract_boot_class!(argv) || ["Boot"]
