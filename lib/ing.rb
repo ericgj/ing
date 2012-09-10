@@ -2,6 +2,8 @@
 require File.expand_path('ing/dispatcher', File.dirname(__FILE__))
 require File.expand_path('ing/shell', File.dirname(__FILE__))
 require File.expand_path('ing/files', File.dirname(__FILE__))
+require File.expand_path('ing/commands/boot', File.dirname(__FILE__))
+require File.expand_path('ing/commands/generate', File.dirname(__FILE__))
 
 module Ing
   
@@ -18,8 +20,9 @@ module Ing
     # resets globals afterwards
     def run(argv=ARGV)
       job = nil
+      booter = extract_boot_class!(argv) || ["Boot"]
       inside_namespace(self) do
-        job = Dispatcher.new(["Boot"], "call", *argv)
+        job = Dispatcher.new(booter, "call", *argv)
       end
       job.dispatch
     end
@@ -29,84 +32,22 @@ module Ing
       yield
       self.namespace = saved_ns
     end
-        
-  end
-  
-  class Boot
-  
-    def self.specify_options(parser)
-      parser.opt :debug, "Display debug messages"
-      parser.opt :require, "Require file or library before running", :multi => true, :type => :string
-#      parser.opt :verbose, "Run verbosely by default"
-#      parser.opt :force, "Overwrite files that already exist"
-#      parser.opt :pretend, "Run but do not make any changes"
-#      parser.opt :quiet, "Suppress status output"
-#      parser.opt :skip, "Skip files that already exist"
-      parser.stop_on_unknown
-    end
-
-    attr_accessor :options 
-    attr_writer :shell
     
-    def shell
-      @shell ||= ::Ing.shell_class.new
-    end
-    
-    def initialize(options)
-      self.options = options
-      debug "#{__FILE__}:#{__LINE__} :: options #{options.inspect}"
-    end
-    
-    # require libs, then dispatch to the passed class/method
-    # configuring it with a shell if possible
-    def call(*args)
-      require_libs options[:require]
-      classes = to_classes(args.shift)
-      meth, args = split_method_args(args)      
-      debug "#{__FILE__}:#{__LINE__} :: dispatch #{classes.inspect}, #{meth.inspect}, #{args.inspect}"
-      Dispatcher.new(classes, meth, *args).dispatch do |cmd|
-        cmd.shell = self.shell if cmd.respond_to?(:"shell=")
-      end
-    end
-    
-    # internal debugging
-    def debug(*args)
-      shell.debug(*args) if options[:debug]
-    end
-
     private
-          
-    # require relative paths relative to the Dir.pwd
-    # otherwise, require as given (so gems can be required, etc.)
-    def require_libs(libs)
-      libs = Array(libs)
-      libs.each do |lib| 
-        f = if /\A\.{1,2}\// =~ lib
-            File.expand_path(lib)
-          else
-            lib
-          end
-        debug "#{__FILE__}:#{__LINE__} :: require #{f.inspect}"
-        require f
-      end
-    end
-        
-    def to_classes(str)
-      str.split(':').map {|c| c.gsub!(/(?:\A|_+)(\w)/) {$1.upcase} }
-    end
     
-    # args 'lookahead'; if next arg is an option, then method == nil
-    # otherwise, use the next arg as the method
-    def split_method_args(args)
-      if /^-{1,2}/ =~ args.first
-        [nil, args]
-      else
-        [args.first, args[1..-1]]
+    def extract_boot_class!(args)
+      c = to_classes(args.first)
+      if (Ing.const_defined?(c.first) rescue nil)
+        args.shift; c
       end
+    end
+
+    def to_classes(str)
+      str.split(':').map {|c| c.gsub(/(?:\A|_+)(\w)/) {$1.upcase} }
     end
     
   end
-  
+
 end
 
 if $0 == __FILE__
