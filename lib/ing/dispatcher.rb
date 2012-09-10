@@ -38,11 +38,11 @@ module Ing
           "undefined or insecure method `#{meth}` for #{klass}"
     end
     
-    # method must be non-inherited instance method of klass
+    # method must be #call, or non-inherited instance method of klass
     def whitelist(meth, klass)
       finder = Proc.new {|m| m == meth.to_sym}
       if klass.respond_to?(:new)
-        klass.instance_methods(false).find(&finder)
+        klass.instance_methods(meth.to_sym == :call).find(&finder)
       else
         klass.methods.find(&finder)
       end

@@ -4,6 +4,7 @@
  'ing/shell',
  'ing/files',
  'ing/commands/boot',
+ 'ing/commands/implicit',
  'ing/commands/generate'
 ].each do |f| 
   require File.expand_path(f, File.dirname(__FILE__)) 
@@ -22,7 +23,7 @@ module Ing
   # dispatches the command after parsing args. 
   # Note boot dispatch happens within Ing::Commands namespace.
   def run(argv=ARGV)
-    booter = extract_boot_class!(argv) || ["Boot"]
+    booter = extract_boot_class!(argv) || ["Implicit"]
     Dispatcher.new(["Ing","Commands"], booter, "call", *argv).dispatch
   end
   
@@ -124,5 +125,7 @@ if $0 == __FILE__
   
   
   Ing.run ["--namespace=tests", "zoo", "--verbose"]
+  
+  Ing.run ["generate", "--debug", "foo"]
   
 end
