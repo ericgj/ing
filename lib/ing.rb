@@ -1,4 +1,5 @@
 ﻿['ing/lib_trollop',
+ 'ing/util',
  'ing/dispatcher',
  'ing/shell',
  'ing/files',
@@ -21,16 +22,20 @@ module Ing
       
   # dispatch to boot class (if specified, or Boot otherwise), which 
   # dispatches the command after parsing args. 
-  # Note boot dispatch happens within Ing namespace.
+  # Note boot dispatch happens within Ing::Commands namespace.
   def run(argv=ARGV)
     job = nil
-    booter = extract_boot_class!(argv) || ["Boot"]
-    inside_namespace(self::Commands) do
+    inside_boot_namespace do
+      booter = extract_boot_class!(argv) || ["Boot"]
       job = Dispatcher.new(booter, "call", *argv)
     end
     job.dispatch
   end
       
+  def inside_boot_namespace(&b)
+    inside_namespace(self::Commands, &b)
+  end
+  
   def inside_namespace(ns)
     saved_ns, self.namespace = namespace, ns
     yield
@@ -40,14 +45,10 @@ module Ing
   private
   
   def extract_boot_class!(args)
-    c = to_classes(args.first)
-    if (Ing.const_defined?(c.first) rescue nil)
+    c = Util.to_class_names(args.first)
+    if (self.namespace.const_defined?(c.first) rescue nil)
       args.shift; c
     end
-  end
-
-  def to_classes(str)
-    str.split(':').map {|c| c.gsub(/(?:\A|_+)(\w)/) {$1.upcase} }
   end
 
 end
