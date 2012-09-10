@@ -2,7 +2,7 @@
 ## Vanilla ruby command-line scripting.
 
 or gratuitous backronym:
-### _I_ _N_eed a _G_enerator! 
+### _I_ _N_ eed a _G_ enerator! 
 
 Note this is a work-in-progress, not quite ready for use.
 
@@ -21,7 +21,7 @@ Option parsing courtesy of the venerable and excellent
     
 ## Command line usage
     
-Say you define a task `Some::Task#run`, at /path/to/some/task.rb.
+Say you define a task `Some::Task#run`, at `/path/to/some/task.rb`.
 
     ing -r./path/to/some/task.rb some:task run --verbose
     
@@ -47,7 +47,7 @@ and preloaded into ruby. They can be either parsed as:
   preload `ing.rb` within that subdirectory: e.g. __some/task/ing.rb__
 
 The command is then dispatched as normal to 
-`Some::Task.new(:force => true).call`  (#call is used if no method is
+`Some::Task.new(:force => true).call`  (`#call` is used if no method is
 specified). So you should put the task code within that namespace in the
 preloaded file.
 
