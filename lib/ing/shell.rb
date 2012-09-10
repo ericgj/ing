@@ -1,6 +1,6 @@
 ﻿require 'fileutils'
 
-module Gin
+module Ing
 
   module Shell
   

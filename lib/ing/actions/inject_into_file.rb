@@ -1,6 +1,6 @@
 require File.expand_path('empty_directory', File.dirname(__FILE__))
 
-module Gin
+module Ing
   module Files
 
     # Injects the given content into a file. Different from gsub_file, this

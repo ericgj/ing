@@ -12,7 +12,7 @@ require File.expand_path('actions/inject_into_file', File.dirname(__FILE__))
 #  - attr_reader :source_root, :destination_root
 #  - attr_reader :shell, :options
 #  - self.specify_options (optional; adds to it if defined)
-module Gin
+module Ing
   module Files
 
     # a bit of trickiness to change a singleton method...

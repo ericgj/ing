@@ -1,6 +1,6 @@
 require File.expand_path('create_file', File.dirname(__FILE__))
 
-module Gin
+module Ing
   module Files
 
     # Create a new file relative to the destination root from the given source.

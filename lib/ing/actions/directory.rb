@@ -1,6 +1,6 @@
 require File.expand_path('empty_directory', File.dirname(__FILE__))
 
-module Gin
+module Ing
   module Files
     # Copies recursively the files from source directory to root directory.
     # If any of the files finishes with .tt, it's considered to be a template

@@ -1,6 +1,6 @@
 require File.expand_path('empty_directory', File.dirname(__FILE__))
 
-module Gin
+module Ing
   module Files
 
     # Create a new file relative to the destination root with the given data,

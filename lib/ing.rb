@@ -1,9 +1,9 @@
-﻿require File.expand_path('gin/lib_trollop', File.dirname(__FILE__))
-require File.expand_path('gin/dispatcher', File.dirname(__FILE__))
-require File.expand_path('gin/shell', File.dirname(__FILE__))
-require File.expand_path('gin/files', File.dirname(__FILE__))
+﻿require File.expand_path('ing/lib_trollop', File.dirname(__FILE__))
+require File.expand_path('ing/dispatcher', File.dirname(__FILE__))
+require File.expand_path('ing/shell', File.dirname(__FILE__))
+require File.expand_path('ing/files', File.dirname(__FILE__))
 
-module Gin
+module Ing
   
   class << self
     attr_writer :namespace, :shell_class
@@ -49,7 +49,7 @@ module Gin
     attr_writer :shell
     
     def shell
-      @shell ||= ::Gin.shell_class.new
+      @shell ||= ::Ing.shell_class.new
     end
     
     def initialize(options)
@@ -145,25 +145,25 @@ if $0 == __FILE__
 
   Baz = Proc.new {|g| puts "lambda called with generator #{g.inspect}"}
   
-  Gin.namespace = Tests
+  Ing.namespace = Tests
   
-  Gin.run ["--debug", "foo"]  # no method
+  Ing.run ["--debug", "foo"]  # no method
   
-  Gin.run ["--debug", "--require=./tmp.rb", "--require=minitest/spec", "foo"]
+  Ing.run ["--debug", "--require=./tmp.rb", "--require=minitest/spec", "foo"]
   
-  Gin.run ["foo", "run", "--count=3"]   # method with args
+  Ing.run ["foo", "run", "--count=3"]   # method with args
     
-  Gin.run ["foo", "run", "boo"]   # method with non-option arg
+  Ing.run ["foo", "run", "boo"]   # method with non-option arg
   
-  Gin.run ["-d", "foo:bar", "--baz", "yes"]    # lambda with args
+  Ing.run ["-d", "foo:bar", "--baz", "yes"]    # lambda with args
   
   # failures
   
-#  Gin.run ["foo", "class"]    # illegal method
+#  Ing.run ["foo", "class"]    # illegal method
   
-#  Gin.run ["baz"]             # class outside of namespace
+#  Ing.run ["baz"]             # class outside of namespace
   
-  # tests of Gin::Actions
+  # tests of Ing::Actions
   
   module Tests
   
@@ -173,7 +173,7 @@ if $0 == __FILE__
         expect.opt :monkey, "Monkey test"
       end
       
-      include Gin::Files
+      include Ing::Files
       attr_accessor :options, :destination_root, :source_root, :shell
       
       def initialize(options)
@@ -196,6 +196,6 @@ if $0 == __FILE__
   end
   
   
-  Gin.run ["zoo", "--verbose"]
+  Ing.run ["zoo", "--verbose"]
   
 end

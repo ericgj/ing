@@ -1,7 +1,7 @@
-﻿module Gin
+﻿module Ing
 
   class Generate
-    extend Gin::Options
+    extend Ing::Options
     
     option "--gen-root [DIR]", "Root for generate"
 

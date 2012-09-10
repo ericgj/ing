@@ -1,4 +1,4 @@
-module Gin
+module Ing
   module Files
 
     # Creates an empty directory.

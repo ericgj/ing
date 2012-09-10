@@ -1,12 +1,12 @@
 ﻿# assumes  namespace:class method options
       
-module Gin
+module Ing
 
   class Dispatcher
     attr_accessor :dispatch_class, :dispatch_meth, :args, :options
     
     def initialize(classes, meth, *args)
-      self.dispatch_class = get_const(classes, ::Gin.namespace)
+      self.dispatch_class = get_const(classes, ::Ing.namespace)
       self.dispatch_meth  = valid_meth(meth, dispatch_class)
       self.args = args
     end

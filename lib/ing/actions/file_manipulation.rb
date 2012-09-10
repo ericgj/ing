@@ -1,7 +1,7 @@
 require 'erb'
 require 'open-uri'
 
-module Gin
+module Ing
   module Files
 
     # Copies the file from the relative source to the relative destination. If
