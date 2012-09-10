@@ -5,9 +5,9 @@ module Ing
     class Generate
 
       DEFAULTS = {
-         namespace: ::Object,
-         ing_file: 'ing.rb',
-         gen_root: ENV.fetch('ING_GENERATOR_ROOT', '~/.ing/generators')
+         namespace: 'object',
+         ing_file:  'ing.rb',
+         gen_root:  ENV.fetch('ING_GENERATOR_ROOT', '~/.ing/generators')
       }
     
       def self.specify_options(parser)
@@ -43,10 +43,11 @@ module Ing
       # configuring it with a shell if possible
       def call(*args)
         require_generator args.first
-        classes = ::Ing::Util.to_class_names(args.shift)
+        ns         = ::Ing::Util.to_class_names(options[:namespace])
+        classes    = ::Ing::Util.to_class_names(args.shift)
         meth, args = ::Ing::Util.split_method_args(args)      
         debug "#{__FILE__}:#{__LINE__} :: dispatch #{classes.inspect}, #{meth.inspect}, #{args.inspect}"
-        Dispatcher.new(classes, meth, *args).dispatch do |cmd|
+        Dispatcher.new(ns, classes, meth, *args).dispatch do |cmd|
           cmd.shell = self.shell if cmd.respond_to?(:"shell=")
         end
       end

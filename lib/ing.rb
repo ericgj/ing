@@ -12,10 +12,8 @@ end
 module Ing
   extend self
   
-  attr_writer :namespace, :shell_class
-  def namespace
-    @namespace ||= self::Commands
-  end
+  attr_writer :shell_class
+
   def shell_class
     @shell_class ||= Shell::Basic
   end
@@ -24,29 +22,15 @@ module Ing
   # dispatches the command after parsing args. 
   # Note boot dispatch happens within Ing::Commands namespace.
   def run(argv=ARGV)
-    job = nil
-    inside_boot_namespace do
-      booter = extract_boot_class!(argv) || ["Boot"]
-      job = Dispatcher.new(booter, "call", *argv)
-    end
-    job.dispatch
-  end
-      
-  def inside_boot_namespace(&b)
-    inside_namespace(self::Commands, &b)
-  end
-  
-  def inside_namespace(ns)
-    saved_ns, self.namespace = namespace, ns
-    yield
-    self.namespace = saved_ns
+    booter = extract_boot_class!(argv) || ["Boot"]
+    Dispatcher.new(["Ing","Commands"], booter, "call", *argv).dispatch
   end
   
   private
   
   def extract_boot_class!(args)
     c = Util.to_class_names(args.first)
-    if (self.namespace.const_defined?(c.first) rescue nil)
+    if (Commands.const_defined?(c.first) rescue nil)
       args.shift; c
     end
   end
@@ -89,17 +73,16 @@ if $0 == __FILE__
 
   Baz = Proc.new {|g| puts "lambda called with generator #{g.inspect}"}
   
-  Ing.namespace = Tests
   
-  Ing.run ["--debug", "foo"]  # no method
+  Ing.run ["--debug", "--namespace=tests", "foo"]  # no method
   
-  Ing.run ["--debug", "--require=./tmp.rb", "--require=minitest/spec", "foo"]
+  Ing.run ["--debug", "--namespace=tests", "--require=./tmp.rb", "--require=minitest/spec", "foo"]
   
-  Ing.run ["foo", "run", "--count=3"]   # method with args
+  Ing.run ["--namespace=tests", "foo", "run", "--count=3"]   # method with args
     
-  Ing.run ["foo", "run", "boo"]   # method with non-option arg
+  Ing.run ["--namespace=tests", "foo", "run", "boo"]   # method with non-option arg
   
-  Ing.run ["-d", "foo:bar", "--baz", "yes"]    # lambda with args
+  Ing.run ["--namespace=tests", "-d", "foo:bar", "--baz", "yes"]    # lambda with args
   
   # failures
   
@@ -140,6 +123,6 @@ if $0 == __FILE__
   end
   
   
-  Ing.run ["zoo", "--verbose"]
+  Ing.run ["--namespace=tests", "zoo", "--verbose"]
   
 end

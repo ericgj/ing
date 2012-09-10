@@ -1,12 +1,13 @@
-﻿# assumes  namespace:class method options
+﻿
       
 module Ing
 
   class Dispatcher
     attr_accessor :dispatch_class, :dispatch_meth, :args, :options
     
-    def initialize(classes, meth, *args)
-      self.dispatch_class = get_const(classes, ::Ing.namespace)
+    def initialize(namespaces, classes, meth, *args)
+      ns                  = Util.namespaced_const_get(namespaces)
+      self.dispatch_class = Util.namespaced_const_get(classes, ns)
       self.dispatch_meth  = valid_meth(meth, dispatch_class)
       self.args = args
     end
@@ -23,11 +24,6 @@ module Ing
     end
         
     private
-    
-    # class must be namespaced under base
-    def get_const(classes, base)
-      classes.inject(base) {|memo, klass| memo.const_get(klass, false)}
-    end
     
     def parse_options!(args, klass)
       return {} unless klass.respond_to?(:specify_options)
