@@ -4,6 +4,8 @@
 or gratuitous backronym:
 ### _I_ _N_eed a _G_enerator! 
 
+Note this is a work-in-progress, not quite ready for use.
+
 The command-line syntax is similar to Thor's, and it incorporates Thor's 
 (Rails') generator methods (`inside 'foo' { create_file %foo_file%.rb }`) and
 shell conventions (`yes? 'process foo files?', :yellow`), but unlike Thor or
@@ -17,7 +19,7 @@ Option parsing courtesy of the venerable and excellent
 
     gem install ing
     
-## Usage
+## Command line usage
     
 Say you define a task `Some::Task#run`, at /path/to/some/task.rb.
 
@@ -25,8 +27,11 @@ Say you define a task `Some::Task#run`, at /path/to/some/task.rb.
     
 To walk through that command a bit: 
 
-1. `ing -r` loads specified ruby files or libraries/gems; then
-2. it dispatches to `Some::Task.new(:verbose => true).run`.
+  1. `ing -r` loads specified ruby files or libraries/gems; then
+  2. it dispatches to `Some::Task.new(:verbose => true).run`.
+
+You can -r as many libaries/files as you like. Of course, that gets pretty 
+long-winded.
 
 Ing has some built in helper commands, notably `generate` or `g`, which
 simplifies a common use-case (at the expense of some file-system conventions):
@@ -36,10 +41,10 @@ simplifies a common use-case (at the expense of some file-system conventions):
 Unlike Thor/Rails generators, these don't need to be packaged up as gems
 and preloaded into ruby. They can be either parsed as:
 
-1. A file relative to a _generators root dir_ (`ENV['ING_GENERATORS_ROOT']` or
-`~/.ing/generators`), e.g. some/task, or
-2. A subdirectory of the generators root dir, in which case it attempts to
-preload `ing.rb` within that subdirectory, e.g. some/task/ing.rb
+  1. A __file__ relative to a root dir (`ENV['ING_GENERATORS_ROOT']` or
+  `~/.ing/generators`): e.g. __some/task__, or
+  2. A __subdirectory__ of the root dir, in which case it attempts to
+  preload `ing.rb` within that subdirectory: e.g. __some/task/ing.rb__
 
 The command is then dispatched as normal to 
 `Some::Task.new(:force => true).call`  (#call is used if no method is
@@ -48,6 +53,11 @@ preloaded file.
 
 _TODO: more examples needed_
 
+## Tasks, in plain old ruby
+
+_TODO_
+
+
 ## Motivation
 
 I wanted to use Thor's generator methods and shell conventions to write my own
@@ -55,4 +65,4 @@ generators. But I didn't want to fight against Thor's hijacking of ruby classes.
 
 ### But what about task dependency resolution?
 
-That's what `require` is for.
+That's what `require` is for ;)
