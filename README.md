@@ -130,6 +130,8 @@ gets called when there is no second arg.  Organizing the methods like this means
 you can also do `ing test type unit`: extra args are passed into the method as
 parameters.  
 
+For more worked examples of ing tasks, see the [examples](ing/blob/master/examples) directory.
+
 [MORE](ing/blob/master/TASKS.md)
 
 ### Option arguments
