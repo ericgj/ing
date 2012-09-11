@@ -117,7 +117,7 @@ gets called when there is no second arg.  Organizing the methods like this means
 you can also do `ing test type unit`: extra args are passed into the method as
 parameters.  
 
-[MORE](blob/master/TASKS.md)
+[MORE](ing/blob/master/TASKS.md)
 
 ### Option arguments
 
@@ -125,21 +125,23 @@ Your tasks (ing subcommands) can specify what options they take by defining a
 class method `specify_options`.  The best way to understand how this is done is 
 by example:
 
-    class Cleanup
-    
-      def self.specify_options(expect)
-        expect.opt :quiet, "Run silently"
-        expect.opt :path,  "Path to clean up", :type => :string, :default => '.'
-      end
-      
-      attr_accessor :options
-      
-      def initialize(options)
-        self.options = options
-      end
-      
-      # ...
-    end
+```ruby
+class Cleanup
+
+  def self.specify_options(expect)
+    expect.opt :quiet, "Run silently"
+    expect.opt :path,  "Path to clean up", :type => :string, :default => '.'
+  end
+  
+  attr_accessor :options
+  
+  def initialize(options)
+    self.options = options
+  end
+  
+  # ...
+end
+```
 
 The syntax used in `self.specify_options` is Trollop - in fact what you are 
 doing is building a `Trollop::Parser` which then emits the parsed options into 
@@ -147,38 +149,40 @@ your constructor. In general your constructor should just save the options to
 an instance variable like this, but in some cases you might want to do further
 processing of the passed options.
 
-[MORE](blob/master/OPTIONS.md)
+[MORE](ing/blob/master/OPTIONS.md)
 
 ### Generator tasks
 
 If you want to use Thor-ish generator methods, your task classes need a few more
 things added to their interface. Basically, it should look something like this.
 
-    class MyGenerator
-    
-      def self.specify_options(expect)
-        # ...
-      end
-      
-      include Ing::Files
-      
-      attr_accessor :destination_root, :source_root, :options, :shell
-      def destination_root
-        @destination_root ||= Dir.pwd
-      end
-      
-      def initialize(options)
-        self.options = options
-      end
-      
-      # ...
-    end
+```ruby
+class MyGenerator
+
+  def self.specify_options(expect)
+    # ...
+  end
+  
+  include Ing::Files
+  
+  attr_accessor :destination_root, :source_root, :options, :shell
+  def destination_root
+    @destination_root ||= Dir.pwd
+  end
+  
+  def initialize(options)
+    self.options = options
+  end
+  
+  # ...
+end
+```
 
 The generator methods need `:destination_root`, `:source_root`, and `:shell`.
 Also, `include Ing::Files` _after_ you specify any options (this is because
 `Ing::Files` adds several options automatically).
 
-[MORE](blob/master/GENERATORS.md)
+[MORE](ing/blob/master/GENERATORS.md)
 
 ## Motivation
 
