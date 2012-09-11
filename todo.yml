@@ -1,8 +1,7 @@
 ﻿Ing todo
 ---
-- add methods to Shell from Thor, add Shell::Color
+- adjust thor specs for actions (2 down, 4 to go)
+- formalize acceptance tests now sitting in lib/ing.rb
+- add Shell::Color
 - remove global Ing.shell_class, specify via color switch
-- review each Action class, take out Thor-specific stuff and destination_root refs
 - incorporate gsub_file patch, patches to Shell
-- formalize acceptance tests
-- adjust thor specs for actions

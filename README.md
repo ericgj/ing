@@ -234,8 +234,8 @@ with a suitably ugly syntax to dissuade you. :P
 
 ### But what about security?
 
-Yes, this means any ruby library and even built-in classes can be run from the 
-command line... but so what?
+Yes, this means any ruby library and even built-in classes can be exercised from
+the command line... but so what?
 
 1. You can't run module methods, and the objects you invoke need to have a
 hash constructor. So Kernel, Process, IO, File, etc. are pretty much ruled out.
