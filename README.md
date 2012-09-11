@@ -166,8 +166,15 @@ class MyGenerator
   include Ing::Files
   
   attr_accessor :destination_root, :source_root, :options, :shell
+  
+  # default == execution from within your project directory
   def destination_root
     @destination_root ||= Dir.pwd
+  end
+  
+  # default == current file is within root directory of generator files
+  def source_root
+    @source_root ||= File.expand_path(File.dirname(__FILE__))
   end
   
   def initialize(options)
