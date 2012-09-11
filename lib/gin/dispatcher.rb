@@ -1,43 +1,63 @@
-﻿module Gin
+﻿# assumes  namespace:class method options
+      
+module Gin
 
   class Dispatcher
     attr_accessor :dispatch_class, :dispatch_meth, :args, :options
     
-    def initialize(classes, meth=nil, args=[], opts={})
+    def initialize(classes, meth, *args)
+      debug "Dispatch.new", 
+            "#{classes.inspect}, #{meth.inspect}, #{args.inspect}"
       self.dispatch_class = get_const(classes, ::Gin.namespace)
-      if meth
-        self.dispatch_meth = whitelist(meth, dispatch_class) or 
-                             raise NoMethodError, 
-                              "undefined or insecure method `#{meth}` for #{dispatch_class}"
-      end
+      self.dispatch_meth  = valid_meth(meth, dispatch_class)
       self.args = args
-      self.options = opts
     end
     
     def dispatch
-      if !dispatch_meth && args.empty?
-        dispatch_class.call new_generator(options)
+      self.options = parse_options!(args, dispatch_class)
+      if dispatch_class.respond_to?(:new)
+        debug "Dispatch#dispatch",
+              "#{dispatch_class}.new(#{options.inspect}).#{dispatch_meth} *#{args.inspect}"
+        dispatch_class.new(options).send(dispatch_meth, *args)
       else
-        dispatch_class.new(options).send((dispatch_meth || :call), *args)
-      end 
+        debug "Dispatch#dispatch",
+              "#{dispatch_class}.call(*#{args.inspect}, #{options.inspect})"      
+        dispatch_class.call *args, options
+      end
     end
-    
-    def new_shell
-      ::Gin.shell_class.new
-    end
-    
-    def new_generator(opts={})
-      ::Gin.generator_class.new(new_shell, opts)
-    end
-    
+        
     private
     
+    def debug(*a,&b)
+      Gin.debug(*a,&b)
+    end
+    
+    # class must be namespaced under base
     def get_const(classes, base)
       classes.inject(base) {|memo, klass| memo.const_get(klass, false)}
     end
     
+    def parse_options!(args, klass)
+      return {} unless klass.respond_to?(:parse)
+      klass.parse(p = Trollop::Parser.new)
+      Trollop.with_standard_exception_handling(p) { p.parse(args) }
+    end
+    
+    def valid_meth(meth, klass)
+      meth ||= :call
+      whitelist(meth, klass) or 
+        raise NoMethodError, 
+          "undefined or insecure method `#{meth}` for #{klass}"
+    end
+    
+    # method must be non-inherited instance method of klass
     def whitelist(meth, klass)
-      klass.instance_methods(false).find {|m| m == meth.to_sym}
+      finder = Proc.new {|m| m == meth.to_sym}
+      if klass.respond_to?(:new)
+        klass.instance_methods(false).find(&finder)
+      else
+        klass.methods.find(&finder)
+      end
     end
     
   end
