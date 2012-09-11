@@ -10,9 +10,9 @@ The command-line syntax is similar to Thor's, and it incorporates Thor's
 
 ```ruby
 if yes? 'process foo files?', :yellow
-  inside 'foo' { create_file %foo_file%.rb }
+  inside('foo') { create_file %foo_file%.rb }
 end
-```
+``` 
 but unlike Thor or Rake, it does not define its own DSL. Your tasks correspond 
 to PORO classes and methods. Ing just handles routing from the command line to 
 them, and setting options. Your classes (or even Procs) do the rest.
@@ -21,6 +21,8 @@ Option parsing courtesy of the venerable and excellent
 [Trollop](http://trollop.rubyforge.org/), under the hood.
 
 ## Installation
+
+_Note: not yet gemified_
 
     gem install ing
     
@@ -113,7 +115,9 @@ end
 As you can see, the second arg corresponds to the method name. `call` is what
 gets called when there is no second arg.  Organizing the methods like this means
 you can also do `ing test type unit`: extra args are passed into the method as
-parameters.  See [MORE](TASKS.md)
+parameters.  
+
+[MORE](blob/master/TASKS.md)
 
 ### Option arguments
 
@@ -143,7 +147,7 @@ your constructor. In general your constructor should just save the options to
 an instance variable like this, but in some cases you might want to do further
 processing of the passed options.
 
-See [MORE](OPTIONS.md)
+[MORE](blob/master/OPTIONS.md)
 
 ### Generator tasks
 
@@ -174,7 +178,7 @@ The generator methods need `:destination_root`, `:source_root`, and `:shell`.
 Also, `include Ing::Files` _after_ you specify any options (this is because
 `Ing::Files` adds several options automatically).
 
-See [MORE](GENERATORS.md)
+[MORE](blob/master/GENERATORS.md)
 
 ## Motivation
 
