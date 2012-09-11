@@ -10,7 +10,7 @@ The command-line syntax is similar to Thor's, and it incorporates Thor's
 
 ```ruby
 if yes? 'process foo files?', :yellow
-  inside('foo') { create_file %foo_file%.rb }
+  inside('foo') { create_file '%foo_file%.rb' }
 end
 ``` 
 but unlike Thor or Rake, it does not define its own DSL. Your tasks correspond 
