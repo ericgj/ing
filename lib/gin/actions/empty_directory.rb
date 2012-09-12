@@ -83,8 +83,8 @@ module Gin
         def destination=(destination)
           if destination
             @given_destination = convert_encoded_instructions(destination.to_s)
-            @destination = ::File.expand_path(@given_destination, base.destination_root)
-            @relative_destination = base.relative_to_original_destination_root(@destination)
+            @destination = ::File.expand_path(@given_destination, base.current_destination)
+            @relative_destination = ::File.expand_path(@given_destination, base.destination_root)
           end
         end
 
@@ -106,6 +106,10 @@ module Gin
           end
         end
 
+# TODO: change this to whitelist methods as done in dispatcher
+# so that only base.instance_methods(false) are allowed
+# this will prevent e.g. %empty_directory%.rb
+        
         # Calls `base`'s public method `sym`.
         # Returns:: result of `base.sym` or `nil` if `sym` wasn't found in
         #  `base`
