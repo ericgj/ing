@@ -6,8 +6,6 @@ module Gin
     attr_accessor :dispatch_class, :dispatch_meth, :args, :options
     
     def initialize(classes, meth, *args)
-      debug "Dispatch.new", 
-            "#{classes.inspect}, #{meth.inspect}, #{args.inspect}"
       self.dispatch_class = get_const(classes, ::Gin.namespace)
       self.dispatch_meth  = valid_meth(meth, dispatch_class)
       self.args = args
@@ -16,21 +14,15 @@ module Gin
     def dispatch
       self.options = parse_options!(args, dispatch_class)
       if dispatch_class.respond_to?(:new)
-        debug "Dispatch#dispatch",
-              "#{dispatch_class}.new(#{options.inspect}).#{dispatch_meth} *#{args.inspect}"
-        dispatch_class.new(options).send(dispatch_meth, *args)
+        cmd = dispatch_class.new(options)
+        yield cmd if block_given?
+        cmd.send(dispatch_meth, *args)
       else
-        debug "Dispatch#dispatch",
-              "#{dispatch_class}.call(*#{args.inspect}, #{options.inspect})"      
         dispatch_class.call *args, options
       end
     end
         
     private
-    
-    def debug(*a,&b)
-      Gin.debug(*a,&b)
-    end
     
     # class must be namespaced under base
     def get_const(classes, base)
