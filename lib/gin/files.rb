@@ -1,9 +1,17 @@
-﻿
+﻿require 'fileutils'
+
+require File.expand_path('actions/empty_directory', File.dirname(__FILE__))
+require File.expand_path('actions/create_file', File.dirname(__FILE__))
+require File.expand_path('actions/create_link', File.dirname(__FILE__))
+require File.expand_path('actions/directory', File.dirname(__FILE__))
+require File.expand_path('actions/file_manipulation', File.dirname(__FILE__))
+require File.expand_path('actions/inject_into_file', File.dirname(__FILE__))
+
+
 # Interface with base class:
 #  - attr_reader :source_root, :destination_root
 #  - attr_reader :shell, :options
-#  - self.parse (optional; adds to it if not defined)
-
+#  - self.parse (optional; adds to it if defined)
 module Gin
   module Files
 
