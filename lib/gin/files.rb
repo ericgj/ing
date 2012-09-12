@@ -11,15 +11,15 @@ require File.expand_path('actions/inject_into_file', File.dirname(__FILE__))
 # Interface with base class:
 #  - attr_reader :source_root, :destination_root
 #  - attr_reader :shell, :options
-#  - self.parse (optional; adds to it if defined)
+#  - self.specify_options (optional; adds to it if defined)
 module Gin
   module Files
 
     # a bit of trickiness to change a singleton method...
     def self.included(base)
-      parse = base.method(:parse) if base.respond_to?(:parse)
-      base.send(:define_singleton_method, :parse) do |expect|
-        parse.call(expect) if parse
+      meth = base.method(:specify_options) if base.respond_to?(:specify_options)
+      base.send(:define_singleton_method, :specify_options) do |expect|
+        meth.call(expect) if meth
         expect.opt :verbose, "Run verbosely by default", :short => nil
         expect.opt :force, "Overwrite files that already exist", :short => nil
         expect.opt :pretend, "Run but do not make any changes", :short => nil

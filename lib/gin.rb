@@ -34,7 +34,7 @@ module Gin
   
   class Boot
   
-    def self.parse(parser)
+    def self.specify_options(parser)
       parser.opt :debug, "Display debug messages"
       parser.opt :require, "Require file or library before running", :multi => true, :type => :string
 #      parser.opt :verbose, "Run verbosely by default"
@@ -120,7 +120,7 @@ if $0 == __FILE__
         new(opts).call(*args)
       end
       
-      def self.parse(p)
+      def self.specify_options(p)
         p.opt :count, "Count", :type => :integer
       end
       
@@ -169,7 +169,7 @@ if $0 == __FILE__
   
     class Zoo
       
-      def self.parse(expect)
+      def self.specify_options(expect)
         expect.opt :monkey, "Monkey test"
       end
       

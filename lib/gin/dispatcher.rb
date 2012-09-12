@@ -30,8 +30,8 @@ module Gin
     end
     
     def parse_options!(args, klass)
-      return {} unless klass.respond_to?(:parse)
-      klass.parse(p = Trollop::Parser.new)
+      return {} unless klass.respond_to?(:specify_options)
+      klass.specify_options(p = Trollop::Parser.new)
       Trollop.with_standard_exception_handling(p) { p.parse(args) }
     end
     
