@@ -1,7 +1,7 @@
 ﻿require File.expand_path('gin/lib_trollop', File.dirname(__FILE__))
 require File.expand_path('gin/dispatcher', File.dirname(__FILE__))
 require File.expand_path('gin/shell', File.dirname(__FILE__))
-require File.expand_path('gin/generator', File.dirname(__FILE__))
+require File.expand_path('gin/files', File.dirname(__FILE__))
 
 module Gin
   
@@ -162,5 +162,40 @@ if $0 == __FILE__
 #  Gin.run ["foo", "class"]    # illegal method
   
 #  Gin.run ["baz"]             # class outside of namespace
+  
+  # tests of Gin::Actions
+  
+  module Tests
+  
+    class Zoo
+      
+      def self.parse(expect)
+        expect.opt :monkey, "Monkey test"
+      end
+      
+      include Gin::Files
+      attr_accessor :options, :destination_root, :source_root, :shell
+      
+      def initialize(options)
+        self.options = options
+        self.source_root = File.dirname(__FILE__)
+        self.destination_root = File.expand_path('..',self.source_root)
+        $stderr.puts "options :: #{self.options.inspect}"
+      end
+      
+      def call(*args)
+        in_root do
+          inside "lib" do
+          
+          end
+        end
+      end
+      
+    end
+    
+  end
+  
+  
+  Gin.run ["zoo", "--verbose"]
   
 end
