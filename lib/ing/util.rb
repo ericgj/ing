@@ -5,6 +5,14 @@
     def to_class_names(str)
       str.split(':').map {|c| c.gsub(/(?:\A|_+)(\w)/) {$1.upcase} }
     end
+    alias decode_class_names to_class_names
+    
+    def encode_class_names(list)
+      list.map {|c| c.to_s.gsub(/([A-Z])/) {
+          ($`.empty? ? "" : "_") + $1.downcase
+        } 
+      }.join(':')
+    end
     
     def to_classes(str, base=::Object)
       namespaced_const_get( to_class_names(str), base )

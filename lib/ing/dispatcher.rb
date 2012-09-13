@@ -1,4 +1,4 @@
-﻿
+﻿require 'stringio'
       
 module Ing
 
@@ -12,6 +12,22 @@ module Ing
       self.args = args
     end
     
+    def describe
+      s=StringIO.new
+      with_option_parser(self.dispatch_class) do |p|
+        p.educate_banner s
+      end
+      s.rewind; s
+    end
+    
+    def help
+      s=StringIO.new
+      with_option_parser(self.dispatch_class) do |p|
+        p.educate s
+      end
+      s.rewind; s   
+    end
+    
     def dispatch
       self.options = parse_options!(args, dispatch_class)
       if dispatch_class.respond_to?(:new)
@@ -23,12 +39,18 @@ module Ing
       end
     end
         
+    def with_option_parser(klass)
+      return unless klass.respond_to?(:specify_options)
+      klass.specify_options(p = Trollop::Parser.new)
+      yield p
+    end
+    
     private
     
     def parse_options!(args, klass)
-      return {} unless klass.respond_to?(:specify_options)
-      klass.specify_options(p = Trollop::Parser.new)
-      Trollop.with_standard_exception_handling(p) { p.parse(args) }
+      with_option_parser(klass) do |p|
+        Trollop.with_standard_exception_handling(p) { p.parse(args) }
+      end
     end
     
     def valid_meth(meth, klass)

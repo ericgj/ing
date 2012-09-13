@@ -1,10 +1,12 @@
 ﻿['ing/lib_trollop',
+ 'ing/trollop/parser',
  'ing/util',
  'ing/dispatcher',
  'ing/shell',
  'ing/files',
  'ing/commands/boot',
  'ing/commands/implicit',
+ 'ing/commands/list',
  'ing/commands/generate'
 ].each do |f| 
   require File.expand_path(f, File.dirname(__FILE__)) 

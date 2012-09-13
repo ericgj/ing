@@ -12,6 +12,7 @@ module Ing
       }
     
       def self.specify_options(parser)
+        parser.text "Run a generator task"
         parser.opt :debug, "Display debug messages"
         parser.opt :namespace, "Top-level namespace for generators",
                    :type => :string, :default => DEFAULTS[:namespace]

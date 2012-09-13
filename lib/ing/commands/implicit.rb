@@ -7,6 +7,7 @@ module Ing
     class Implicit < Boot
     
       def self.specify_options(parser)
+        parser.text "(internal)"
         parser.opt :debug, "Display debug messages"
         parser.opt :namespace, "Top-level namespace for generators",
                    :type => :string, :default => 'object'
