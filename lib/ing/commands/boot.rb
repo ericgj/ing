@@ -25,7 +25,7 @@ module Ing
       # Configure the command prior to dispatch.
       # Should be implemented in subclasses.
       # If you want to keep this default behavior setting the shell, 
-      # call `super` first.
+      # call +super+ first.
       def configure_command(cmd)
         cmd.shell = self.shell if cmd.respond_to?(:"shell=")
       end
@@ -35,7 +35,7 @@ module Ing
       def after
       end
       
-      # Main processing of arguments and dispatch of the command
+      # Main processing of arguments and dispatch from command line (+Ing.run+)
       def call(*args)
         before *args
         ns         = Ing::Util.to_class_names(options[:namespace] || 'object')
@@ -43,6 +43,24 @@ module Ing
         meth, args = Ing::Util.split_method_args(args)      
         debug "#{__FILE__}:#{__LINE__} :: dispatch #{ns.inspect}, #{classes.inspect}, #{meth.inspect}, #{args.inspect}"
         Dispatcher.new(ns, classes, meth, *args).dispatch do |cmd|
+          configure_command cmd
+        end
+        after
+      end
+      
+      # Dispatch from +Ing.invoke+
+      def call_invoke(klass, meth, *args)
+        before *args
+        Dispatcher.invoke(klass, meth, *args) do |cmd|
+          configure_command cmd
+        end
+        after
+      end
+      
+      # Dispatch from +Ing.execute+
+      def call_execute(klass, meth, *args)
+        before *args
+        Dispatcher.execute(klass, meth, *args) do |cmd|
           configure_command cmd
         end
         after

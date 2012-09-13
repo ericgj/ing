@@ -14,6 +14,10 @@
       }.join(':')
     end
     
+    def encode_class(klass)
+      encode_class_names(klass.to_s.split('::'))
+    end
+    
     def to_classes(str, base=::Object)
       namespaced_const_get( to_class_names(str), base )
     end

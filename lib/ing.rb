@@ -9,7 +9,7 @@
  'ing/commands/list',
  'ing/commands/generate'
 ].each do |f| 
-  require File.expand_path(f, File.dirname(__FILE__)) 
+  require_relative f
 end
 
 module Ing
@@ -21,15 +21,45 @@ module Ing
     @shell_class ||= Shell::Basic
   end
       
-  # dispatch to boot class (if specified, or Boot otherwise), which 
+  def implicit_booter
+    ["Implicit"]
+  end
+  
+  # Dispatch command line to boot class (if specified, or Boot otherwise), which 
   # dispatches the command after parsing args. 
-  # Note boot dispatch happens within Ing::Commands namespace.
+  # Note boot dispatch happens within +Ing::Commands+ namespace.
   def run(argv=ARGV)
-    booter = extract_boot_class!(argv) || ["Implicit"]
-    Dispatcher.new(["Ing","Commands"], booter, "call", *argv).dispatch
+    booter = extract_boot_class!(argv) || implicit_booter
+    run_boot booter, "call", *argv
+  end
+  
+  # Dispatch to the command via +Ing::Boot#call_invoke+
+  # Use this when you want to invoke a command from another command, but only
+  # if it hasn't been run yet. For example,
+  #
+  #   invoke Some::Task, :some_instance_method, some_argument, :some_option => true
+  #
+  # Like running from the command line, you can skip the method and it will assume
+  # +#call+ :
+  #
+  #   invoke Some::Task, :some_option => true
+  def invoke(klass, *args)
+    run_boot implicit_booter, "call_invoke", klass, *args
+  end
+  
+  # Dispatch to the command via +Ing::Boot#call_execute+
+  # Use this when you want to execute a command from another command, and you
+  # don't care if it has been run yet or not. See equivalent examples under 
+  # +invoke+.
+  def execute(klass, *args)
+    run_boot implicit_booter, "call_execute", klass, *args
   end
   
   private
+  
+  def run_boot(booter, *args)
+    Dispatcher.new(["Ing","Commands"], booter, *args).dispatch
+  end
   
   def extract_boot_class!(args)
     c = Util.to_class_names(args.first)
@@ -92,6 +122,15 @@ if $0 == __FILE__
 #  Ing.run ["foo", "class"]    # illegal method
   
 #  Ing.run ["baz"]             # class outside of namespace
+  
+  # tests of Ing.execute, Ing.invoke
+  Ing::Dispatcher.dispatched.clear
+  
+  Ing.execute Tests::Foo, "run", :count => 1
+  Ing.invoke Tests::Foo, "run", :count => 2
+  Ing.execute Tests::Foo, "run", :count => 3
+  
+  puts "----->" + Ing::Dispatcher.dispatched.inspect
   
   # tests of Ing::Actions
   
