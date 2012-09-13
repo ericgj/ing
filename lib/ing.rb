@@ -31,7 +31,7 @@ module Ing
   
   def extract_boot_class!(args)
     c = Util.to_class_names(args.first)
-    if (Commands.const_defined?(c.first) rescue nil)
+    if (Commands.const_defined?(c.first, false) rescue nil)
       args.shift; c
     end
   end
