@@ -212,3 +212,15 @@ code in things that are _also_ run from the command line. Is it application or
 library code? Controller or model? But `invoke` is there if you must, hopefully 
 with a suitably ugly syntax to dissuade you. :P
 
+### But what about security?
+
+Yes, this means any ruby library and even built-in classes can be run from the 
+command line... but so what?
+
+1. You can't run module methods, and the objects you invoke need to have a
+hash constructor. So Kernel, Process, IO, and File are pretty much ruled out.
+Most of the ruby built-in classes are ruled out in fact.
+
+2. More to the point, you're already in a shell with much more dangerous knives
+lying around. You had better trust the scripts you're working with!
+
