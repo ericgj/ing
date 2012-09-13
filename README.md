@@ -204,4 +204,4 @@ generators. But I didn't want to fight against Thor's hijacking of ruby classes.
 
 ### But what about task dependency resolution?
 
-That's what `require` is for ;)
+That's what `require` and `||=` are for ;)
