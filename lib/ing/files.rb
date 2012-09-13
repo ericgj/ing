@@ -77,6 +77,11 @@ module Ing
       !!options[:skip]
     end
 
+        
+    def current_destination
+      destination_stack.last
+    end
+    
     # Wraps an action object and call it accordingly to the behavior attribute.
     #
     def action(instance) #:nodoc:
@@ -131,10 +136,6 @@ module Ing
     
     def destination_stack
       @_destination_stack ||= [destination_root]
-    end
-        
-    def current_destination
-      destination_stack.last
     end
     
   end
