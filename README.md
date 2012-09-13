@@ -14,8 +14,8 @@ if yes? 'process foo files?', :yellow
 end
 ``` 
 but unlike Thor or Rake, it does not define its own DSL. Your tasks correspond 
-to PORO classes and methods. Ing just handles routing from the command line to 
-them, and setting options. Your classes (or even Procs) do the rest.
+to plain ruby classes and methods. Ing just handles routing from the command line 
+to them, and setting options. Your classes (or even Procs) do the rest.
 
 Option parsing courtesy of the venerable and excellent
 [Trollop](http://trollop.rubyforge.org/), under the hood.
