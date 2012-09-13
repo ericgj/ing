@@ -8,6 +8,7 @@
  'ing/boot',
  'ing/files',
  'ing/task',
+ 'ing/generator',
  'ing/commands/implicit',
  'ing/commands/list',
  'ing/commands/help',
@@ -77,4 +78,22 @@ module Ing
     end
   end
 
+end
+
+if $0 == __FILE__
+
+  class Copier < Ing::Generator
+  
+    default :source, './test/fixtures'
+    default :dest,   './test/sandbox'
+    
+    def call
+      puts source_root, destination_root
+      directory 'doc'
+    end
+    
+  end
+  
+  Ing.run ["copier"]
+  
 end

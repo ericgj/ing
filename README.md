@@ -213,7 +213,7 @@ things added to their interface. Basically, it should look something like this.
 ```ruby
 class MyGenerator
 
-  def self.specify_options(expect)
+  def self.specify_options(spec)
     # ...
   end
   
@@ -242,6 +242,11 @@ end
 The generator methods need `:destination_root`, `:source_root`, and `:shell`.
 Also, `include Ing::Files` _after_ you specify any options (this is because
 `Ing::Files` adds several options automatically).
+
+If you prefer, you can inherit from `Ing::Generator`, which gives you all of 
+the above defaults, plus the functionality of `Ing::Task`.
+
+Like `Ing::Task`, `Ing::Generator` is simply a convenience for common scenarios.
 
 [MORE](ing/blob/master/GENERATORS.md)
 

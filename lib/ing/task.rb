@@ -11,6 +11,14 @@ module Ing
 
     class << self
     
+      def default(key, val)
+        defaults[key] = val
+      end
+      
+      def defaults
+        @defaults ||= {}
+      end
+      
       def desc(line="")
         _options[:desc] << line
       end
@@ -63,14 +71,27 @@ module Ing
       
     end
     
-    attr_accessor :options
+    attr_accessor :options, :shell
     def initialize(options)
-      self.options = initial_options(options)
+      options.delete_if {|k,v| v.nil?}        # for merge to work right
+      self.options = initial_options(self.class.defaults.merge(options))
     end
     
     # override in subclass for special behavior
     def initial_options(options)
       options
+    end
+
+    def validate_option(opt, desc=opt, msg=nil)
+      msg ||= "Error in option #{desc} for `#{self.class}`."
+      !!yield(self.options[opt]) or
+        raise ArgumentError, msg
+    end
+    
+    def validate_option_exists(opt, desc=opt)
+      msg = "No #{desc} specified for  `#{self.class}`. You must either " +
+            "specify a `--#{opt}` option or set a default in #{self.class}."
+      validate_option(opt, desc, msg) {|val| val }
     end
     
   end
