@@ -34,12 +34,12 @@ The ing command line is generally parsed as
 
     [ing command] [ing command options] [subcommand] [args] [subcommand options]
     
-But in cases where the first argument isn't an ing command or options, it's 
+But in cases where the first argument isn't an built-in ing command or options, it's 
 simplified to
 
     [subcommand] [args] [subcommand options]
 
-To take some examples.
+The "subcommand" is your task. To take some examples.
 
     ing -r./path/to/some/task.rb some:task run --verbose
     
@@ -50,7 +50,8 @@ To take some examples.
 
 You can -r as many libaries/files as you like. Of course, that gets pretty 
 long-winded. By default, it requires a file `./ing.rb` if it exists (the 
-equivalent of Rakefile or Thorfile).
+equivalent of Rakefile or Thorfile). In which case, assuming your task class is
+defined or loaded there, the line can be simply `ing some:task run --verbose`.
 
 Ing has some built in helper commands, notably `generate` or `g`, which
 simplifies a common and familiar use-case (at the expense of some file-
@@ -85,26 +86,31 @@ class Test
   # no options passed, but you need the constructor
   def initialize(options); end
   
+  # `ing test`
   def call(*args)
     suite
   end
   
+  # `ing test suite`
   def suite
     unit; functional; acceptance
   end
 
+  # `ing test unit`
   def unit
     type 'unit'
   end
 
+  # `ing test functional`
   def functional
     type 'functional'
   end
 
+  # `ing test acceptance`
   def acceptance
     type 'acceptance'
   end
-  
+    
   def type(dir)
     Dir["./test/#{dir}/*.rb"].each { |f| require_relative f }
   end
@@ -132,7 +138,7 @@ class Cleanup
     expect.opt :quiet, "Run silently"
     expect.opt :path,  "Path to clean up", :type => :string, :default => '.'
   end
-  
+    
   attr_accessor :options
   
   def initialize(options)
