@@ -205,3 +205,10 @@ generators. But I didn't want to fight against Thor's hijacking of ruby classes.
 ### But what about task dependency resolution?
 
 That's what `require` and `||=` are for ;)
+
+Seriously, you do have `Ing.invoke Some::Task :some_method` and `Ing.execute ...`
+for this kind of thing. Personally I think it's a code smell to put reusable
+code in things that are _also_ run from the command line. Is it application or
+library code? Controller or model? But `invoke` is there if you must, hopefully 
+with a suitably ugly syntax to dissuade you. :P
+
