@@ -51,9 +51,14 @@ The "subcommand" is your task. To take some examples.
 You can -r as many libaries/files as you like. Of course, that gets pretty 
 long-winded. By default, it requires a file `./ing.rb` if it exists (the 
 equivalent of Rakefile or Thorfile). In which case, assuming your task class is
-defined or loaded there, the line can be simply `ing some:task run --verbose`.
+defined or loaded there, the line can be simply 
 
-Ing has some built in helper commands, notably `generate` or `g`, which
+    ing some:task run --verbose
+
+Ing has some built in subcommands. These are still being implemented, but
+you can see what they are so far with `ing list`.
+
+The most significant subcommand is `generate` or `g`, which
 simplifies a common and familiar use-case (at the expense of some file-
 system conventions):
 
@@ -62,8 +67,7 @@ system conventions):
 Unlike Thor/Rails generators, these don't need to be packaged up as gems
 and preloaded into ruby. They can be either parsed as:
 
-  1. A __file__ relative to a root dir (by default, `ENV['ING_GENERATORS_ROOT']` or
-  `~/.ing/generators`): e.g. __some/task__, or
+  1. A __file__ relative to a root dir: e.g. __some/task__, or
   2. A __subdirectory__ of the root dir, in which case it attempts to
   preload `ing.rb` within that subdirectory: e.g. __some/task/ing.rb__
 
@@ -71,6 +75,9 @@ The command is then dispatched as normal to
 `Some::Task.new(:force => true).call`  (`#call` is used if no method is
 specified). So you should put the task code within that namespace in the
 preloaded file.
+
+(By default, the generator root directory is specified by 
+`ENV['ING_GENERATORS_ROOT']` or failing that, `~/.ing/generators`.)
 
 _TODO: more examples needed_
 
@@ -202,6 +209,17 @@ Also, `include Ing::Files` _after_ you specify any options (this is because
 I wanted to use Thor's generator methods and shell conventions to write my own
 generators. But I didn't want to fight against Thor's hijacking of ruby classes.
 
+### Brief note about the design
+
+One of the design principles is to limit inheritance (classical and mixin), and
+most importantly to _avoid introducing new state via inheritance_. An important
+corollary of this is that the _application objects_, ie. your task classes, 
+must themselves take responsibility for their interface with the underlying
+resources they mix in or compose, instead of those resources providing the 
+interface (via so-called macro-style class methods, for instance).
+
+## Q & A
+
 ### But what about task dependency resolution?
 
 That's what `require` and `||=` are for ;)
@@ -218,7 +236,7 @@ Yes, this means any ruby library and even built-in classes can be run from the
 command line... but so what?
 
 1. You can't run module methods, and the objects you invoke need to have a
-hash constructor. So Kernel, Process, IO, and File are pretty much ruled out.
+hash constructor. So Kernel, Process, IO, File, etc. are pretty much ruled out.
 Most of the ruby built-in classes are ruled out in fact.
 
 2. More to the point, you're already in a shell with much more dangerous knives
