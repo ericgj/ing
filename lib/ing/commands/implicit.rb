@@ -6,18 +6,29 @@ module Ing
     # a built-in Ing command. For example, `ing some:task run` .
     class Implicit < Boot
     
+      DEFAULTS = {
+         namespace: 'object',
+         ing_file:  'ing.rb'
+      }
+      
       def self.specify_options(parser)
         parser.text "(internal)"
         parser.opt :debug, "Display debug messages"
         parser.opt :namespace, "Top-level namespace for generators",
-                   :type => :string, :default => 'object'
-        parser.opt :require, "Require file or library before running (multi)", :multi => true, :type => :string
+                   :type => :string, :default => DEFAULTS[:namespace]
+        parser.opt :require, "Require file or library before running (multi)", 
+                   :multi => true, :type => :string
+        parser.opt :ing_file, "Default generator file (ruby)", 
+                   :type => :string, :short => 'f', 
+                   :default => DEFAULTS[:ing_file]
         parser.stop_on_unknown
       end
       
       # Require each passed file or library before running
+      # and require the ing file if it exists
       def before(*args)
         require_libs options[:require]
+        require_ing_file
       end
       
       private
@@ -37,6 +48,11 @@ module Ing
         end
       end
 
+      def require_ing_file
+        f = File.expand_path(options[:ing_file])
+        require_libs(f) if File.exists?(f)
+      end
+      
     end
 
   end
