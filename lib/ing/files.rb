@@ -81,6 +81,18 @@ module Ing
     def current_destination
       destination_stack.last
     end
+
+    # Returns the given path relative to the absolute root (ie, root where
+    # the script started).
+    #
+    def relative_to_original_destination_root(path, remove_dot=true)
+      path = path.dup
+      if path.gsub!(destination_root, '.')
+        remove_dot ? (path[2..-1] || '') : path
+      else
+        path
+      end
+    end
     
     # Wraps an action object and call it accordingly to the behavior attribute.
     #

@@ -4,7 +4,7 @@ require File.expand_path("../../lib/ing/files", File.dirname(__FILE__))
 describe Ing::Files::CreateFile do
   include SpecHelpers
   
-  before do
+  def reset
     ARGV.replace []
     ::FileUtils.rm_rf(destination_root)
   end
@@ -30,7 +30,27 @@ describe Ing::Files::CreateFile do
     @silence = true
   end
 
+  # stubs multiple input responses from $stdin.gets
+  # not currently used
+  class StubInput
+  
+    def initialize(expected)
+      @s = Array(expected)
+    end
+    
+    def gets
+      @s.shift
+    end
+    
+    def reply_for(stream=$stdin, &b)
+      stream.stub(:gets, self.method(:gets), &b)
+    end
+    
+  end
+  
   describe "#invoke!" do
+    before { reset }
+    
     it "creates a file" do
       create_file("doc/config.rb")
       invoke!
@@ -67,12 +87,14 @@ describe Ing::Files::CreateFile do
     end
 
     describe "when file exists" do
-      before do
-        create_file("doc/config.rb")
-        invoke!
-      end
 
       describe "and is identical" do
+        before do
+          reset
+          create_file("doc/config.rb")
+          invoke!
+        end
+
         it "shows identical status" do
           create_file("doc/config.rb")
           invoke!
@@ -82,6 +104,9 @@ describe Ing::Files::CreateFile do
 
       describe "and is not identical" do
         before do
+          reset
+          create_file("doc/config.rb")
+          invoke!          
           File.open(File.join(destination_root, 'doc/config.rb'), 'w'){ |f| f.write("FOO = 3") }
         end
 
@@ -107,11 +132,11 @@ describe Ing::Files::CreateFile do
 
         it "shows conflict status to ther user" do
           refute create_file("doc/config.rb").identical?
+          file = File.join(destination_root, 'doc/config.rb')
+          content = nil
           $stdin.stub(:gets,'s') do
-            file = File.join(destination_root, 'doc/config.rb')
+            content = invoke!
           end
-
-          content = invoke!
           assert_match(/conflict  doc\/config\.rb/, content)
           assert_match(/Overwrite #{file}\? \(enter "h" for help\) \[Ynaqdh\]/, content)
           assert_match(/skip  doc\/config\.rb/, content)
@@ -131,24 +156,22 @@ describe Ing::Files::CreateFile do
           end
         end
 
-# Not sure how to do the mock method here....
+# Not sure how to do the mock method here without more flexible mocks....
 #        it "executes the block given to show file content" do
 #          create_file("doc/config.rb")
-#          $stdin.stub(:gets,'d') do
-#            $stdin.stub(:gets,'n') do
-#              m = MiniTest::Mock.new; m.expect(:system, nil, [/diff -u/])
-#              sh, @base.shell = @base.shell, m
-#              invoke!
-#              @base.shell = sh
-#            end
-#          end
+#          $stdin.should_receive(:gets).and_return('d')
+#          $stdin.should_receive(:gets).and_return('n')
+#          @base.shell.should_receive(:system).with(/diff -u/)
+#          invoke!
 #        end
 
       end
     end
-  end
-
+  end  
+  
   describe "#revoke!" do
+    before { reset }
+    
     it "removes the destination file" do
       create_file("doc/config.rb")
       invoke!
@@ -164,6 +187,7 @@ describe Ing::Files::CreateFile do
   end
 
   describe "#exists?" do
+    before { reset }
     it "returns true if the destination file exists" do
       create_file("doc/config.rb")
       refute @action.exists?
@@ -173,6 +197,7 @@ describe Ing::Files::CreateFile do
   end
 
   describe "#identical?" do
+    before { reset }
     it "returns true if the destination file and is identical" do
       create_file("doc/config.rb")
       refute @action.identical?
