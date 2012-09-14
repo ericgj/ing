@@ -4,10 +4,7 @@
     expect.opt :third, "The third argument", :type => :numeric, :default => 3,
                         :short => "t"
     expect.opt :fourth, "The fourth argument", :type => :numeric  
-    expect.banner <<-FOO
-Description:
-  This generator runs three tasks: one, two and three.
-FOO
+    expect.banner "This generator runs three tasks: one, two and three."
   end
   
   include Ing::Files

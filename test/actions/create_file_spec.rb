@@ -12,6 +12,7 @@ describe Ing::Files::CreateFile do
   def create_file(destination=nil, config={}, options={})
     @base = MyCounter.new(options)
     @base.destination_root = destination_root
+    @base.call 1,2
     MyCounter.send(:define_method, :file_name, Proc.new {'rdoc'} )
 
     @action = Ing::Files::CreateFile.new(@base, destination, "CONFIGURATION",
