@@ -119,7 +119,7 @@ module Ing
           if base.respond_to?(sym)
             base.send(sym)
           elsif base.respond_to?(sym, true)
-            raise Thor::PrivateMethodEncodedError,
+            raise NoMethodError,
               "Method #{base.class}##{sym} should be public, not private"
           else
             nil
