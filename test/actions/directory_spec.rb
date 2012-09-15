@@ -84,12 +84,9 @@ describe Ing::Files::Directory do
       refute File.exists?(file)
     end
 
-    # Note: I had to change this spec as I think it was incorrect in Thor
-    # `inside` only changes the destination current path
     it "copies files from the source relative to the current path" do
       invoker.inside "doc" do
-        #invoke! "."
-        invoke! "doc", "."
+        invoke! "."
       end
       exists_and_identical?("doc", "doc")
     end

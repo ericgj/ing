@@ -112,7 +112,7 @@ module Ing
     # first.
     #
     def find_in_source_paths(file)
-      relative_root = relative_to_original_destination_root(destination_root, false)
+      relative_root = relative_to_original_destination_root(current_destination, false)
       source_paths  = (respond_to?(:source_paths) ? self.source_paths : []) +
                       [self.source_root]
                       
@@ -174,7 +174,7 @@ module Ing
     # Goes to the current root and execute the given block.
     #
     def in_root
-      inside(current_destination) { yield }
+      inside(destination_root) { yield }
     end
     
     private
