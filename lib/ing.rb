@@ -15,6 +15,8 @@ end
 module Ing
   extend self
   
+  Error = Class.new(StandardError)
+  
   attr_writer :shell_class
 
   def shell_class

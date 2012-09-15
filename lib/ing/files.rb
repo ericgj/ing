@@ -81,7 +81,17 @@ module Ing
     def current_destination
       destination_stack.last
     end
-
+    
+    # Wraps an action object and call it accordingly to the behavior attribute.
+    #
+    def action(instance) #:nodoc:
+      if revoke?
+        instance.revoke!
+      else
+        instance.invoke!
+      end
+    end
+    
     # Returns the given path relative to the absolute root (ie, root where
     # the script started).
     #
@@ -94,15 +104,38 @@ module Ing
       end
     end
     
-    # Wraps an action object and call it accordingly to the behavior attribute.
+
+    # Receives a file or directory and search for it in the source paths.
     #
-    def action(instance) #:nodoc:
-      if revoke?
-        instance.revoke!
-      else
-        instance.invoke!
+    # Note that at minimum, the base object must define +source_root+.
+    # If +source_paths+ is also defined, those will be used to search for files
+    # first.
+    #
+    def find_in_source_paths(file)
+      relative_root = relative_to_original_destination_root(destination_root, false)
+      source_paths  = (respond_to?(:source_paths) ? self.source_paths : []) +
+                      [self.source_root]
+                      
+      source_paths.each do |source|
+        source_file = File.expand_path(file, File.join(source, relative_root))
+        return source_file if File.exists?(source_file)
       end
+
+      message = "Could not find #{file.inspect} in any of your source paths. "
+
+      unless source_root
+        message << "Please set the source_root with the path containing your templates."
+      end
+
+      if source_paths.empty?
+        message << "Currently you have no source paths."
+      else
+        message << "Your current source paths are: \n#{source_paths.join("\n")}"
+      end
+
+      raise Ing::Error, message
     end
+
 
     # Do something in the root or on a provided subfolder. If a relative path
     # is given it's referenced from the current root. The full path is yielded

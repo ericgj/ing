@@ -38,6 +38,23 @@
       end
     end    
     
+    # Returns a string that has had any glob characters escaped.
+    # The glob characters are `* ? { } [ ]`.
+    #
+    # ==== Examples
+    #
+    #   Util.escape_globs('[apps]')   # => '\[apps\]'
+    #
+    # ==== Parameters
+    # String
+    #
+    # ==== Returns
+    # String
+    #
+    def escape_globs(path)
+      path.to_s.gsub(/[*?{}\[\]]/, '\\\\\\&')
+    end
+    
   end
   
 end

@@ -1,18 +1,30 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-require 'thor/actions'
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
+require File.expand_path("../../lib/ing/files", File.dirname(__FILE__))
 
-describe Thor::Actions::Directory do
-  before do
+describe Ing::Files::Directory do
+  include TestHelpers
+  
+  def reset
     ::FileUtils.rm_rf(destination_root)
-    invoker.stub!(:file_name).and_return("rdoc")
+    invoker.class.send(:define_method, :file_name, Proc.new{ "rdoc" })
   end
 
   def invoker
-    @invoker ||= WhinyGenerator.new([1,2], {}, { :destination_root => destination_root })
+    @invoker ||= begin
+      wg=WhinyGenerator.new({})
+      wg.destination_root = destination_root
+      wg.call 1,2
+      wg
+    end
   end
 
   def revoker
-    @revoker ||= WhinyGenerator.new([1,2], {}, { :destination_root => destination_root, :behavior => :revoke })
+    @revoker ||= begin
+      wg=WhinyGenerator.new({:revoke => true}) 
+      wg.destination_root = destination_root
+      wg.call 1,2
+      wg
+    end
   end
 
   def invoke!(*args, &block)
@@ -28,21 +40,25 @@ describe Thor::Actions::Directory do
       source      = File.join(source_root, source_path, file)
       destination = File.join(destination_root, destination_path, file)
 
-      File.exists?(destination).should be_true
-      FileUtils.identical?(source, destination).should be_true
+      assert File.exists?(destination)
+      assert FileUtils.identical?(source, destination)
     end
   end
 
   describe "#invoke!" do
+  
+    before { reset }
+    
     it "raises an error if the source does not exist" do
-      lambda {
-        invoke! "unknown"
-      }.should raise_error(Thor::Error, /Could not find "unknown" in any of your source paths/)
+      assert_match(
+        /Could not find "unknown" in any of your source paths/,
+        assert_raises(Ing::Error) { invoke! "unknown" }.message
+      )
     end
 
     it "should not create a directory in pretend mode" do
       invoke! "doc", "ghost", :pretend => true
-      File.exists?("ghost").should be_false
+      refute File.exists?("ghost")
     end
 
     it "copies the whole directory recursively to the default destination" do
@@ -55,22 +71,25 @@ describe Thor::Actions::Directory do
       exists_and_identical?("doc", "docs")
     end
 
-    it "copies only the first level files if recursive" do
+    it "copies only the first level files if not recursive" do
       invoke! ".", "tasks", :recursive => false
 
-      file = File.join(destination_root, "tasks", "group.thor")
-      File.exists?(file).should be_true
+      file = File.join(destination_root, "tasks", "group.ing.rb")
+      assert File.exists?(file)
 
       file = File.join(destination_root, "tasks", "doc")
-      File.exists?(file).should be_false
+      refute File.exists?(file)
 
       file = File.join(destination_root, "tasks", "doc", "README")
-      File.exists?(file).should be_false
+      refute File.exists?(file)
     end
 
+    # Note: I had to change this spec as I think it was incorrect in Thor
+    # `inside` only changes the destination current path
     it "copies files from the source relative to the current path" do
       invoker.inside "doc" do
-        invoke! "."
+        #invoke! "."
+        invoke! "doc", "."
       end
       exists_and_identical?("doc", "doc")
     end
@@ -78,40 +97,40 @@ describe Thor::Actions::Directory do
     it "copies and evaluates templates" do
       invoke! "doc", "docs"
       file = File.join(destination_root, "docs", "rdoc.rb")
-      File.exists?(file).should be_true
-      File.read(file).should == "FOO = FOO\n"
+      assert File.exists?(file)
+      assert_equal "FOO = FOO\n", File.read(file)
     end
 
     it "copies directories" do
       invoke! "doc", "docs"
       file = File.join(destination_root, "docs", "components")
-      File.exists?(file).should be_true
-      File.directory?(file).should be_true
+      assert File.exists?(file)
+      assert File.directory?(file)
     end
 
     it "does not copy .empty_directory files" do
       invoke! "doc", "docs"
       file = File.join(destination_root, "docs", "components", ".empty_directory")
-      File.exists?(file).should be_false
+      refute File.exists?(file)
     end
 
     it "copies directories even if they are empty" do
       invoke! "doc/components", "docs/components"
       file = File.join(destination_root, "docs", "components")
-      File.exists?(file).should be_true
+      assert File.exists?(file)
     end
 
     it "does not copy empty directories twice" do
       content = invoke!("doc/components", "docs/components")
-      content.should_not =~ /exist/
+      refute_match(/exist/, content)
     end
 
     it "logs status" do
       content = invoke!("doc")
-      content.should =~ /create  doc\/README/
-      content.should =~ /create  doc\/config\.rb/
-      content.should =~ /create  doc\/rdoc\.rb/
-      content.should =~ /create  doc\/components/
+      assert_match(/create  doc\/README/, content)
+      assert_match(/create  doc\/config\.rb/, content)
+      assert_match(/create  doc\/rdoc\.rb/, content)
+      assert_match(/create  doc\/components/, content)
     end
 
     it "yields a block" do
@@ -119,31 +138,33 @@ describe Thor::Actions::Directory do
       invoke!("doc") do |content|
         checked ||= !!(content =~ /FOO/)
       end
-      checked.should be_true
+      assert checked
     end
 
     it "works with glob characters in the path" do
       content = invoke!("app{1}")
-      content.should =~ /create  app\{1\}\/README/
+      assert_match(/create  app\{1\}\/README/, content)
     end
   end
 
   describe "#revoke!" do
+    before { reset }
+    
     it "removes the destination file" do
       invoke! "doc"
       revoke! "doc"
 
-      File.exists?(File.join(destination_root, "doc", "README")).should be_false
-      File.exists?(File.join(destination_root, "doc", "config.rb")).should be_false
-      File.exists?(File.join(destination_root, "doc", "components")).should be_false
+      refute File.exists?(File.join(destination_root, "doc", "README"))
+      refute File.exists?(File.join(destination_root, "doc", "config.rb"))
+      refute File.exists?(File.join(destination_root, "doc", "components"))
     end
 
     it "works with glob characters in the path" do
       invoke! "app{1}"
-      File.exists?(File.join(destination_root, "app{1}", "README")).should be_true
+      assert File.exists?(File.join(destination_root, "app{1}", "README"))
 
       revoke! "app{1}"
-      File.exists?(File.join(destination_root, "app{1}", "README")).should be_false
+      refute File.exists?(File.join(destination_root, "app{1}", "README"))
     end
   end
 end

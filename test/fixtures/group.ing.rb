@@ -40,5 +40,29 @@
     options[:third]
   end
   
+end
 
+
+class WhinyGenerator
+  include Ing::Files
+
+  def source_root
+    File.expand_path(File.dirname(__FILE__))
+  end
+
+  attr_accessor :destination_root, :options, :shell
+  
+  def shell
+    @shell ||= Ing.shell_class.new
+  end
+
+  def initialize(options)
+    self.options = options
+  end
+  
+  def call(*args)
+  end
+  
+  def wrong_arity(required)
+  end
 end

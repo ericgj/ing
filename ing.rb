@@ -16,8 +16,10 @@ module Rspec
       [ /^(\s*)(.+)\.should_not\s*=~\s*(.+)$/   , '\1refute_match(\3, \2)' ],
       [ /^(\s*)(.+)\.should\s+be_(.+)$/         , '\1assert \2.\3?'        ],
       [ /^(\s*)(.+)\.should_not\s+be_(.+)$/     , '\1refute \2.\3?'        ],
-      [ /^(\s*)expect\s+\{(.+)\}\.to\s+raise_error\s*(?:$|([\w:]+))/, 
-        '\1assert_raises(\3) {\2}'                                      ],
+      [ /expect\s+\{(.+)\}\.to\s+raise_error\s*\((.*)\)\s*\Z/m, 
+        'assert_raises(\2) {\1}'                                      ],
+      [ /\{(.+)\}\.should raise_error\s*\((.*)\)\s*\Z/m,
+        'assert_raises(\2) {\1}'                                        ],
     # these next aren't quite right because they need to wrap the next 
     # lines as a lambda. Thus the FIXME notes.
       [ /\.should_receive\(([^\)]+)\)\.and_return\(([^\)]+)\)/,  
