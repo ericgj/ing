@@ -1,7 +1,7 @@
 ﻿module Ing
   module Commands
-    
-    class List
+  
+    class Help
 
       DEFAULTS = {
          namespace: 'ing:commands',
@@ -9,7 +9,7 @@
       }
       
       def self.specify_options(parser)
-        parser.text "List all tasks within specified namespace"
+        parser.text "Display help on specified command"
         parser.opt :debug, "Display debug messages"
         parser.opt :namespace, "Top-level namespace",
                    :type => :string, :default => DEFAULTS[:namespace]   
@@ -38,22 +38,16 @@
         require_libs options[:require]
         require_ing_file
       end
-
-      
-      def call(*args)
-        before(*args)
+    
+      def call(cmd)
+        before(cmd)
         ns        = Ing::Util.to_class_names(options[:namespace] || 'object')
-        mod       = Ing::Util.namespaced_const_get(ns)
-        data = mod.constants.map do |c|
-          desc = Dispatcher.new(ns, [c]).describe
-          [ "ing #{Ing::Util.encode_class_names(ns + [c])}", 
-            (desc.gets || '(no description)').chomp
-          ]
-        end.sort
-        shell.say desc_lines(ns, data).join("\n")
+        cs        = Ing::Util.to_class_names(cmd)
+        help = Dispatcher.new(ns, cs).help
+        shell.say help.read
       end
       
-      private 
+      private
             
       # require relative paths relative to the Dir.pwd
       # otherwise, require as given (so gems can be required, etc.)
@@ -74,30 +68,15 @@
         f = File.expand_path(options[:ing_file])
         require_libs(f) if File.exists?(f)
       end
-      
-      def desc_lines(ns, data)
-        colwidths = data.inject([0,0]) {|max, (line, desc)| 
-          max[0] = line.length if line.length > max[0]
-          max[1] = desc.length if desc.length > max[1]
-          max
-        }
-        ["#{ns.join(' ')}: all tasks",
-         "-" * 80
-        ] +
-        data.map {|line, desc|
-          [ line.ljust(colwidths[0]),
-            desc[0...(80 - colwidths[0] - 2)]
-          ].join("  ")
-        }
-      end
-
+            
       # Internal debugging
       def debug(*args)
         shell.debug(*args) if options[:debug]
       end
       
     end
-   
-    L = List
+    
+    H = Help
+  
   end
 end

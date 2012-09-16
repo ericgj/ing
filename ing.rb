@@ -30,12 +30,16 @@ module Rspec
     ]
     
     def self.specify_options(expect)
+      expect.banner "Convert rspec 'should/not' matchers to minitest 'assert/refute'"
+      expect.text "It's not magic, you still need to hand edit your test files after running this"
+      expect.text "\nUsage:"
+      expect.text "  ing rspec:convert    # which is equivalent to"
+      expect.text "  ing rspec:convert files './{test,spec}/**/*.rb' --convert-dir 'converted'"
+      expect.text "\nOptions:"
       expect.opt :pattern, "Directory glob pattern for test files",
                  :type => :string, :default => './{test,spec}/**/*.rb'
       expect.opt :convert_dir, "Subdirectory to save converted files",
                  :type => :string, :default => 'converted'
-      expect.banner "Convert rspec should/not matchers to minitest assert/refute"
-      expect.text "It's not magic, you still need to hand edit your test files after running this"
     end
     
     include Ing::Files

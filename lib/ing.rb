@@ -7,6 +7,7 @@
  'ing/commands/boot',
  'ing/commands/implicit',
  'ing/commands/list',
+ 'ing/commands/help',
  'ing/commands/generate'
 ].each do |f| 
   require_relative f
