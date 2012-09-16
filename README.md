@@ -3,7 +3,7 @@
 
 or gratuitous backronym: <b>I</b> <b>N</b>eed a <b>G</b>enerator! 
 
-Note this is a work-in-progress, not quite ready for use.
+(Note this is a work-in-progress. Expect some quirkiness.)
 
 The command-line syntax is similar to Thor's, and it incorporates Thor's 
 (Rails') generator methods and shell conventions like
