@@ -57,9 +57,9 @@ defined or loaded from there, the command can be simply
 
     ing some:task run --verbose
 
-### Built-in subcommands
+### Built-in commands
 
-Ing has some built-in subcommands. These are still being implemented, but
+Ing has some built-in commands. These are still being implemented, but
 you can see what they are so far with `ing list`.
 
 The most significant subcommand is `generate` or `g`, which
