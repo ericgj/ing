@@ -106,14 +106,12 @@ module Ing
           end
         end
 
-# TODO: change this to whitelist methods as done in dispatcher
-# so that only base.instance_methods(false) are allowed
-# this will prevent e.g. %empty_directory%.rb
-        
+#TODO: base.public_send(sym) rescue nil      instead?
+
         # Calls `base`'s public method `sym`.
         # Returns:: result of `base.sym` or `nil` if `sym` wasn't found in
         #  `base`
-        # Raises::  Thor::PrivateMethodEncodedError if `sym` references
+        # Raises::  NoMethodError if `sym` references
         #  a private method.
         def call_public_method(sym)
           if base.respond_to?(sym)

@@ -52,7 +52,7 @@ describe Ing::Files::Directory do
     it "raises an error if the source does not exist" do
       assert_match(
         /Could not find "unknown" in any of your source paths/,
-        assert_raises(Ing::Error) { invoke! "unknown" }.message
+        assert_raises(Ing::FileNotFoundError) { invoke! "unknown" }.message
       )
     end
 

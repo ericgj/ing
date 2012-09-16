@@ -16,6 +16,7 @@ module Ing
   extend self
   
   Error = Class.new(StandardError)
+  FileNotFoundError = Class.new(Error)
   
   attr_writer :shell_class
 

@@ -37,6 +37,7 @@ require File.expand_path('actions/inject_into_file', File.dirname(__FILE__))
 #  - attr_reader :shell, :options
 #  - self.specify_options (optional; adds to it if defined)
 module Ing
+  
   module Files
 
     # a bit of trickiness to change a singleton method...
@@ -133,7 +134,7 @@ module Ing
         message << "Your current source paths are: \n#{source_paths.join("\n")}"
       end
 
-      raise Ing::Error, message
+      raise Ing::FileNotFoundError, message
     end
 
 
