@@ -30,6 +30,7 @@
       !!(/^-{1,2}/ =~ arg)
     end
     
+    # not used
     def split_method_args(args)
       if option?(args.first)
         [nil, args]

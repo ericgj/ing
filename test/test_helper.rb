@@ -8,6 +8,7 @@ require File.expand_path('../lib/ing', File.dirname(__FILE__))
 ARGV.clear
 
 # Load fixtures
+load File.join(File.dirname(__FILE__), "fixtures", "task.ing.rb")
 load File.join(File.dirname(__FILE__), "fixtures", "group.ing.rb")
 
 module TestHelpers

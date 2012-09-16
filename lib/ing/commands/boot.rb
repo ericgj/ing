@@ -40,9 +40,8 @@ module Ing
         before *args
         ns         = Ing::Util.to_class_names(options[:namespace] || 'object')
         classes    = Ing::Util.to_class_names(args.shift)
-        meth, args = Ing::Util.split_method_args(args)      
-        debug "#{__FILE__}:#{__LINE__} :: dispatch #{ns.inspect}, #{classes.inspect}, #{meth.inspect}, #{args.inspect}"
-        Dispatcher.new(ns, classes, meth, *args).dispatch do |cmd|
+        debug "#{__FILE__}:#{__LINE__} :: dispatch #{ns.inspect}, #{classes.inspect}, #{args.inspect}"
+        Dispatcher.new(ns, classes, *args).dispatch do |cmd|
           configure_command cmd
         end
         after

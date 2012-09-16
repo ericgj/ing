@@ -30,12 +30,12 @@ module Ing
       Dispatcher.dispatched.include?([dispatch_class,dispatch_meth])
     end
     
-    # Default constructor from `Ing.run` (command line)
-    def initialize(namespaces, classes, meth, *args)
+    # Default constructor from +Ing.run+ (command line)
+    def initialize(namespaces, classes, *args)
       ns                  = Util.namespaced_const_get(namespaces)
       self.dispatch_class = Util.namespaced_const_get(classes, ns)
-      self.dispatch_meth  = valid_meth(meth, dispatch_class)
-      self.options        = parse_options!(args, dispatch_class)
+      self.dispatch_meth  = extract_method!(args, dispatch_class)
+      self.options        = parse_options!(args, dispatch_class) || {}
       self.args           = args
       @invoking           = false
     end
@@ -45,7 +45,7 @@ module Ing
     def initialize_preloaded(invoking, klass, *args)
       self.options        = (Hash === args.last ? args.pop : {})
       self.dispatch_class = klass
-      self.dispatch_meth  = valid_meth(args.shift || :call, dispatch_class)
+      self.dispatch_meth  = extract_method!(args, dispatch_class)
       self.args           = args
       @invoking           = invoking
     end
@@ -107,11 +107,14 @@ module Ing
       end
     end
     
-    def valid_meth(meth, klass)
-      meth ||= :call
-      whitelist(meth, klass) or 
-        raise NoMethodError, 
-          "undefined or insecure method `#{meth}` for #{klass}"
+    def extract_method!(args, klass)
+      return :call if args.empty?
+      if meth = whitelist(args.first, klass)
+        args.shift
+      else
+        meth = :call
+      end
+      meth
     end
         
     # Note this currently does no filtering, but basically checks for respond_to

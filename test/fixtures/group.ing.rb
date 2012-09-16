@@ -1,4 +1,7 @@
-﻿class MyCounter
+﻿# Note: these are Ing::Files fixtures
+# used in actions specs adapted from Thor
+
+class MyCounter
 
   def self.specify_options(expect)
     expect.opt :third, "The third argument", :type => :numeric, :default => 3,
