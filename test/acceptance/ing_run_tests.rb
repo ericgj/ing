@@ -143,4 +143,22 @@ describe Ing do
     
   end
   
+  describe "invoking within tasks" do
+    before { reset }
+    subject { ["invoking:counter", "one"] }
+    
+    it 'should run with expected output' do
+      assert_equal "1\n2\n3\n", capture_run(subject)
+    end
+  end
+  
+  describe "executing within tasks" do
+    before { reset }
+    subject { ["executing:counter", "one"] }
+    
+    it 'should run with expected output' do
+      assert_equal "1\n2\n3\n3\n", capture_run(subject)
+    end    
+  end
+  
 end
