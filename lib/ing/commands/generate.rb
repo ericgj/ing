@@ -3,7 +3,7 @@ module Ing
   module Commands
   
     # This is the boot command invoked from `ing generate ...`
-    class Generate < Boot
+    class Generate
 
       DEFAULTS = {
          namespace: 'object',
@@ -13,25 +13,25 @@ module Ing
     
       def self.specify_options(parser)
         parser.text "Run a generator task"
-        parser.opt :debug, "Display debug messages"
-        parser.opt :namespace, "Top-level namespace for generators",
-                   :type => :string, :default => DEFAULTS[:namespace]
         parser.opt :gen_root, "Generators root directory", 
                    :type => :string, :short => 'r', 
                    :default => DEFAULTS[:gen_root]
-        parser.opt :ing_file, "Default generator file (ruby)", 
-                   :type => :string, :short => 'f', 
-                   :default => DEFAULTS[:ing_file]
         parser.stop_on_unknown
       end
 
+      include Ing::Boot
+      include Ing::CommonOptions
+      
       def generator_root
         @generator_root ||= File.expand_path(options[:gen_root])
       end
       
-      # Locate and require the generator ruby file identified by the first arg,
+      # Require libs and ing_file, then
+      # locate and require the generator ruby file identified by the first arg,
       # before dispatching to it.
       def before(*args)
+        require_libs
+        require_ing_file      
         require_generator args.first
       end
       
