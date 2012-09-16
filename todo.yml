@@ -1,6 +1,6 @@
 ﻿Ing todo
 ---
-- formalize acceptance tests now sitting in lib/ing.rb
+- add tests for execute and invoke
 - add Shell::Color
 - remove global Ing.shell_class, specify via color switch
 - incorporate gsub_file patch, patches to Shell

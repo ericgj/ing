@@ -41,10 +41,10 @@ simplified to
 
 The "subcommand" is your task. To take some examples.
 
-    ing -r./path/to/some/task.rb some:task run --verbose
+    ing -r./path/to/some/task.rb some:task run something --verbose
     
   1. `ing -r` loads specified ruby files or libraries/gems; then
-  2. it dispatches to `Some::Task.new(:verbose => true).run`.
+  2. it dispatches to `Some::Task.new(:verbose => true).run("something")`.
 
 (Assuming you define a task `Some::Task#run`, in `/path/to/some/task.rb`.)
 
@@ -131,8 +131,8 @@ end
     
 As you can see, the second arg corresponds to the method name. `call` is what
 gets called when there is no second arg.  Organizing the methods like this means
-you can also do `ing test type unit`: extra args are passed into the method as
-parameters.  
+you can also do `ing test type unit`: extra non-option arguments are passed into 
+the method as parameters.  
 
 For more worked examples of ing tasks, see the 
 [examples](ing/blob/master/examples) directory.
