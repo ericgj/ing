@@ -14,16 +14,9 @@
         parser.text "  ing help generate               # help on built-in command generate"
         parser.text "  ing help --namespace test unit  # help on command within namespace"
         parser.text "  ing help                        # display this message"
-        parser.text "\nOptions:"
-        parser.opt :debug, "Display debug messages"
-        parser.opt :namespace, "Top-level namespace",
-                   :type => :string, :default => DEFAULTS[:namespace]   
-        parser.opt :require, "Require file or library before running (multi)", 
-                   :multi => true, :type => :string
-        parser.opt :ing_file, "Default task file (ruby)", 
-                   :type => :string, :short => 'f', 
-                   :default => DEFAULTS[:ing_file]
       end
+      
+      include Ing::CommonOptions
       
       attr_accessor :options 
       attr_writer :shell
@@ -34,49 +27,21 @@
       
       def initialize(options)
         self.options = options
-        debug "#{__FILE__}:#{__LINE__} :: options #{options.inspect}"
       end
       
       # Require each passed file or library before running
       # and require the ing file if it exists
-      def before(*args)
-        require_libs options[:require]
+      def before
+        require_libs
         require_ing_file
       end
     
       def call(cmd="help")
-        before(cmd)
+        before
         ns        = Ing::Util.to_class_names(options[:namespace] || 'object')
         cs        = Ing::Util.to_class_names(cmd)
         help = Dispatcher.new(ns, cs).help
         shell.say help.read
-      end
-      
-      private
-            
-      # require relative paths relative to the Dir.pwd
-      # otherwise, require as given (so gems can be required, etc.)
-      def require_libs(libs)
-        libs = Array(libs)
-        libs.each do |lib| 
-          f = if /\A\.{1,2}\// =~ lib
-              File.expand_path(lib)
-            else
-              lib
-            end
-          debug "#{__FILE__}:#{__LINE__} :: require #{f.inspect}"
-          require f
-        end
-      end
-
-      def require_ing_file
-        f = File.expand_path(options[:ing_file])
-        require_libs(f) if File.exists?(f)
-      end
-            
-      # Internal debugging
-      def debug(*args)
-        shell.debug(*args) if options[:debug]
       end
       
     end

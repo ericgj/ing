@@ -14,16 +14,9 @@
         parser.text "  ing list        # list all built-in ing commands"
         parser.text "  ing list rspec  # list all ing commands in rspec namespace, or"
         parser.text "  ing list --namespace rspec"
-        parser.text "\nOptions:"
-        parser.opt :debug, "Display debug messages"
-        parser.opt :namespace, "Top-level namespace",
-                   :type => :string, :default => DEFAULTS[:namespace]   
-        parser.opt :require, "Require file or library before running (multi)", 
-                   :multi => true, :type => :string
-        parser.opt :ing_file, "Default task file (ruby)", 
-                   :type => :string, :short => 'f', 
-                   :default => DEFAULTS[:ing_file]
       end
+      
+      include Ing::CommonOptions
       
       attr_accessor :options 
       attr_writer :shell
@@ -34,19 +27,17 @@
       
       def initialize(options)
         self.options = options
-        debug "#{__FILE__}:#{__LINE__} :: options #{options.inspect}"
       end
       
       # Require each passed file or library before running
       # and require the ing file if it exists
-      def before(*args)
-        require_libs options[:require]
+      def before
+        require_libs
         require_ing_file
       end
-
       
       def call(namespace=options[:namespace])
-        before(namespace)
+        before
         ns        = Ing::Util.to_class_names(namespace)
         mod       = Ing::Util.namespaced_const_get(ns)
         data = mod.constants.map do |c|
@@ -59,27 +50,7 @@
       end
       
       private 
-            
-      # require relative paths relative to the Dir.pwd
-      # otherwise, require as given (so gems can be required, etc.)
-      def require_libs(libs)
-        libs = Array(libs)
-        libs.each do |lib| 
-          f = if /\A\.{1,2}\// =~ lib
-              File.expand_path(lib)
-            else
-              lib
-            end
-          debug "#{__FILE__}:#{__LINE__} :: require #{f.inspect}"
-          require f
-        end
-      end
-
-      def require_ing_file
-        f = File.expand_path(options[:ing_file])
-        require_libs(f) if File.exists?(f)
-      end
-      
+                  
       def desc_lines(ns, data)
         colwidths = data.inject([0,0]) {|max, (line, desc)| 
           max[0] = line.length if line.length > max[0]
@@ -94,11 +65,6 @@
             desc[0...(80 - colwidths[0] - 3)]
           ].join(" # ")
         }
-      end
-
-      # Internal debugging
-      def debug(*args)
-        shell.debug(*args) if options[:debug]
       end
       
     end
