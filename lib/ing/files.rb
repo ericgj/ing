@@ -45,11 +45,11 @@ module Ing
       meth = base.method(:specify_options) if base.respond_to?(:specify_options)
       base.send(:define_singleton_method, :specify_options) do |expect|
         meth.call(expect) if meth
-        expect.text "\nGenerator Options:"
+        expect.text "\nCommon Options:"
         expect.opt :verbose, "Run verbosely by default", :short => nil
         expect.opt :force, "Overwrite files that already exist", :short => nil
         expect.opt :pretend, "Run but do not make any changes", :short => nil
-        expect.opt :revoke, "Revoke action", :short => nil
+        expect.opt :revoke, "Revoke action (not available for all generators)", :short => nil
         expect.opt :quiet, "Suppress status output", :short => nil
         expect.opt :skip, "Skip files that already exist", :short => nil
       end

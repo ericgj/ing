@@ -10,6 +10,11 @@
       
       def self.specify_options(parser)
         parser.text "Display help on specified command"
+        parser.text "\nUsage:"
+        parser.text "  ing help generate               # help on built-in command generate"
+        parser.text "  ing help --namespace test unit  # help on command within namespace"
+        parser.text "  ing help                        # display this message"
+        parser.text "\nOptions:"
         parser.opt :debug, "Display debug messages"
         parser.opt :namespace, "Top-level namespace",
                    :type => :string, :default => DEFAULTS[:namespace]   
@@ -39,7 +44,7 @@
         require_ing_file
       end
     
-      def call(cmd)
+      def call(cmd="help")
         before(cmd)
         ns        = Ing::Util.to_class_names(options[:namespace] || 'object')
         cs        = Ing::Util.to_class_names(cmd)

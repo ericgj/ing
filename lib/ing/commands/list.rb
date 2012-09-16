@@ -9,7 +9,12 @@
       }
       
       def self.specify_options(parser)
-        parser.text "List all tasks within specified namespace"
+        parser.banner "List all tasks within specified namespace"
+        parser.text "\nUsage:"
+        parser.text "  ing list        # list all built-in ing commands"
+        parser.text "  ing list rspec  # list all ing commands in rspec namespace, or"
+        parser.text "  ing list --namespace rspec"
+        parser.text "\nOptions:"
         parser.opt :debug, "Display debug messages"
         parser.opt :namespace, "Top-level namespace",
                    :type => :string, :default => DEFAULTS[:namespace]   
@@ -40,9 +45,9 @@
       end
 
       
-      def call(*args)
-        before(*args)
-        ns        = Ing::Util.to_class_names(options[:namespace] || 'object')
+      def call(namespace=options[:namespace])
+        before(namespace)
+        ns        = Ing::Util.to_class_names(namespace)
         mod       = Ing::Util.namespaced_const_get(ns)
         data = mod.constants.map do |c|
           desc = Dispatcher.new(ns, [c]).describe
@@ -86,8 +91,8 @@
         ] +
         data.map {|line, desc|
           [ line.ljust(colwidths[0]),
-            desc[0...(80 - colwidths[0] - 2)]
-          ].join("  ")
+            desc[0...(80 - colwidths[0] - 3)]
+          ].join(" # ")
         }
       end
 
