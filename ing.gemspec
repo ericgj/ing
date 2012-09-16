@@ -25,5 +25,7 @@ rest.
   
   s.requirements << "ruby >= 1.9"
     
+  s.add_development_dependency 'minitest'
   s.add_development_dependency 'fakeweb'
+  
 end
