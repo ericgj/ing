@@ -16,11 +16,13 @@ module Rspec
       [ /^(\s*)(.+)\.should_not\s*=~\s*(.+)$/   , '\1refute_match(\3, \2)' ],
       [ /^(\s*)(.+)\.should\s+be_(.+)$/         , '\1assert \2.\3?'        ],
       [ /^(\s*)(.+)\.should_not\s+be_(.+)$/     , '\1refute \2.\3?'        ],
-      [ /^(\s*)expect\s+\{(.+)\}\.to\s+raise_error\s*(?:$|([\w:]+))/, 
-        '\1assert_raises(\3) {\2}'                                      ],
+      [ /expect\s+\{(.+)\}\.to\s+raise_error\s*\((.*)\)\s*\Z/m, 
+        'assert_raises(\2) {\1}'                                      ],
+      [ /\{(.+)\}\.should raise_error\s*\((.*)\)\s*\Z/m,
+        'assert_raises(\2) {\1}'                                        ],
     # these next aren't quite right because they need to wrap the next 
     # lines as a lambda. Thus the FIXME notes.
-      [ /\.should_receive\(([^\)]+)\)\.and_return\(([^\)]+)\)/,  
+      [ /\.should_receive\(([^\)]+)\)\.and_return\((.+)\)/,  
         '.stub(\1, \2) do |s|  # FIXME'                                 ],
       [ /.stub\!\(([\w:]+)\)\.and_return\((.+)\)/,
         '.stub(\1, \2) do |s|  # FIXME'                                 ]
@@ -28,12 +30,16 @@ module Rspec
     ]
     
     def self.specify_options(expect)
+      expect.banner "Convert rspec 'should/not' matchers to minitest 'assert/refute'"
+      expect.text "It's not magic, you still need to hand edit your test files after running this"
+      expect.text "\nUsage:"
+      expect.text "  ing rspec:convert    # which is equivalent to"
+      expect.text "  ing rspec:convert files './{test,spec}/**/*.rb' --convert-dir 'converted'"
+      expect.text "\nOptions:"
       expect.opt :pattern, "Directory glob pattern for test files",
                  :type => :string, :default => './{test,spec}/**/*.rb'
       expect.opt :convert_dir, "Subdirectory to save converted files",
                  :type => :string, :default => 'converted'
-      expect.banner "Convert rspec should/not matchers to minitest assert/refute"
-      expect.text "It's not magic, you still need to hand edit your test files after running this"
     end
     
     include Ing::Files
