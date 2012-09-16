@@ -22,8 +22,6 @@ Option parsing courtesy of the venerable and excellent
 
 ## Installation
 
-_Note: not yet gemified_
-
     gem install ing
     
 ## A quick tour
