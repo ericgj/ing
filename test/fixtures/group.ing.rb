@@ -40,6 +40,11 @@
     options[:third]
   end
   
+  def world(&block)
+    result = capture(&block)
+    concat(result.strip + " world!")
+  end
+    
 end
 
 

@@ -1,6 +1,8 @@
 ﻿gem 'minitest'
 require 'minitest/autorun'
 
+require 'fakeweb'
+
 require File.expand_path('../lib/ing', File.dirname(__FILE__))
 
 ARGV.clear

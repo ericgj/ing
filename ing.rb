@@ -22,7 +22,7 @@ module Rspec
         'assert_raises(\2) {\1}'                                        ],
     # these next aren't quite right because they need to wrap the next 
     # lines as a lambda. Thus the FIXME notes.
-      [ /\.should_receive\(([^\)]+)\)\.and_return\(([^\)]+)\)/,  
+      [ /\.should_receive\(([^\)]+)\)\.and_return\((.+)\)/,  
         '.stub(\1, \2) do |s|  # FIXME'                                 ],
       [ /.stub\!\(([\w:]+)\)\.and_return\((.+)\)/,
         '.stub(\1, \2) do |s|  # FIXME'                                 ]

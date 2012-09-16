@@ -126,9 +126,9 @@ module Ing
     #   chmod "script/*", 0755
     #
     def chmod(path, mode, config={})
-      return unless behavior == :invoke
+      return if revoke?
       path = File.expand_path(path, destination_root)
-      say_status :chmod, relative_to_original_destination_root(path), config.fetch(:verbose, true)
+      shell.say_status :chmod, relative_to_original_destination_root(path), config.fetch(:verbose, true)
       FileUtils.chmod_R(mode, path) unless options[:pretend]
     end
 
@@ -216,11 +216,11 @@ module Ing
     #   end
     #
     def gsub_file(path, flag, *args, &block)
-      return unless behavior == :invoke
+      return if revoke?
       config = args.last.is_a?(Hash) ? args.pop : {}
 
       path = File.expand_path(path, destination_root)
-      say_status :gsub, relative_to_original_destination_root(path), config.fetch(:verbose, true)
+      shell.say_status :gsub, relative_to_original_destination_root(path), config.fetch(:verbose, true)
 
       unless options[:pretend]
         content = File.binread(path)
@@ -279,10 +279,10 @@ module Ing
     #   remove_file 'app/controllers/application_controller.rb'
     #
     def remove_file(path, config={})
-      return unless behavior == :invoke
+      return if revoke?
       path  = File.expand_path(path, destination_root)
 
-      say_status :remove, relative_to_original_destination_root(path), config.fetch(:verbose, true)
+      shell.say_status :remove, relative_to_original_destination_root(path), config.fetch(:verbose, true)
       ::FileUtils.rm_rf(path) if !options[:pretend] && File.exists?(path)
     end
     alias :remove_dir :remove_file
