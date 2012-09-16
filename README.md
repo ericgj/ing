@@ -13,7 +13,7 @@ if yes? 'process foo files?', :yellow
   inside('foo') { create_file '%foo_file%.rb' }
 end
 ``` 
-but unlike Thor or Rake, it does not define its own DSL. Your tasks correspond 
+but _unlike_ Thor or Rake, it does not define its own DSL. Your tasks correspond 
 to plain ruby classes and methods. Ing just handles routing from the command line 
 to them, and setting options. Your classes (or even Procs) do the rest.
 
@@ -49,13 +49,17 @@ The "subcommand" is your task. To take some examples.
 (Assuming you define a task `Some::Task#run`, in `/path/to/some/task.rb`.)
 
 You can -r as many libaries/files as you like. Of course, that gets pretty 
-long-winded. By default, it requires a file `./ing.rb` if it exists (the 
-equivalent of Rakefile or Thorfile). In which case, assuming your task class is
-defined or loaded there, the line can be simply 
+long-winded. 
+
+By default, it requires a file `./ing.rb` if it exists (the equivalent of 
+Rakefile or Thorfile). In which case, assuming your task class is
+defined or loaded from there, the command can be simply 
 
     ing some:task run --verbose
 
-Ing has some built in subcommands. These are still being implemented, but
+### Built-in subcommands
+
+Ing has some built-in subcommands. These are still being implemented, but
 you can see what they are so far with `ing list`.
 
 The most significant subcommand is `generate` or `g`, which
@@ -71,7 +75,7 @@ and preloaded into ruby. They can be either parsed as:
   2. A __subdirectory__ of the root dir, in which case it attempts to
   preload `ing.rb` within that subdirectory: e.g. __some/task/ing.rb__
 
-The command is then dispatched as normal to 
+The command above is then dispatched as normal to 
 `Some::Task.new(:force => true).call`  (`#call` is used if no method is
 specified). So you should put the task code within that namespace in the
 preloaded file.
@@ -130,7 +134,8 @@ gets called when there is no second arg.  Organizing the methods like this means
 you can also do `ing test type unit`: extra args are passed into the method as
 parameters.  
 
-For more worked examples of ing tasks, see the [examples](ing/blob/master/examples) directory.
+For more worked examples of ing tasks, see the 
+[examples](ing/blob/master/examples) directory.
 
 [MORE](ing/blob/master/TASKS.md)
 
