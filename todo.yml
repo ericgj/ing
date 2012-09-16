@@ -1,9 +1,7 @@
 ﻿Ing todo
 ---
-- add `ing help` built-in 
 - add Shell::Color
 - remove global Ing.shell_class, specify via color switch
 - incorporate gsub_file patch, patches to Shell
 - refactor common functionality out of built-in commands 
 - add a generator base class for the common use-case
-- gemify

@@ -1,4 +1,5 @@
-﻿['ing/lib_trollop',
+﻿['ing/version',
+ 'ing/lib_trollop',
  'ing/trollop/parser',
  'ing/util',
  'ing/dispatcher',
@@ -74,17 +75,4 @@ module Ing
     end
   end
 
-end
-
-if $0 == __FILE__
-  
-  # tests of Ing.execute, Ing.invoke
-  Ing::Dispatcher.dispatched.clear
-  
-  Ing.execute Tests::Foo, "run", :count => 1
-  Ing.invoke Tests::Foo, "run", :count => 2
-  Ing.execute Tests::Foo, "run", :count => 3
-  
-  puts "----->" + Ing::Dispatcher.dispatched.inspect
-  
 end
