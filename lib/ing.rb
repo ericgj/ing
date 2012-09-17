@@ -94,6 +94,7 @@ if $0 == __FILE__
     
   end
   
-  Ing.run ["copier"]
+  Ing.run ["help", "-n", "object", "copier"]
+  Ing.run ["copier", "--source"]
   
 end

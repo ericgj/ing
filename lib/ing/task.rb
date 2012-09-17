@@ -11,25 +11,26 @@ module Ing
 
     class << self
     
-      def default(key, val)
-        defaults[key] = val
+      def inherited(subclass)
+        subclass.set_options self.options.dup
       end
       
-      def defaults
-        @defaults ||= {}
+      def default(name, val)
+        opt(name) unless options[name]
+        options[name].default = val
       end
-      
+            
       def desc(line="")
-        _options[:desc] << line
+        desc_lines << line
       end
       alias description desc
       
       def usage(line="")
-        _options[:usage] << line
+        usage_lines << line
       end
       
-      def opt(name, desc="", opts={})
-        _options[:opt] << [name, desc, opts]
+      def opt(name, desc="", settings={})
+        options[name] = Option.new(name, desc, settings)
       end
       alias option opt
       
@@ -43,38 +44,37 @@ module Ing
             parser.text line
           end
         end
-        unless (opts = options).empty?
+        unless options.empty?
           parser.text "\nOptions:"
-          opts.each do |opt|
-            parser.opt *opt
+          options.each do |name, opt|
+            parser.opt *opt.to_args
           end
         end
       end
       
       def desc_lines
-        _options[:desc]
+        @desc_lines ||= []
       end
       
       def usage_lines
-        _options[:usage]
+        @usage_lines ||= []
       end
       
-      def options(inherit=true)
-        return _options[:opt] if !inherit || !superclass.respond_to?(:options)
-        superclass.options + _options[:opt]
+      def options
+        @options ||= {}
       end
       
-      private
-      def _options
-        @_options ||= Hash.new{|h,k|h[k]=[]}
+      protected
+      
+      def set_options(o)
+        @options = o
       end
       
     end
     
     attr_accessor :options, :shell
     def initialize(options)
-      options.delete_if {|k,v| v.nil?}        # for merge to work right
-      self.options = initial_options(self.class.defaults.merge(options))
+      self.options = initial_options(options)
     end
     
     # override in subclass for special behavior
@@ -89,11 +89,50 @@ module Ing
     end
     
     def validate_option_exists(opt, desc=opt)
-      msg = "No #{desc} specified for  `#{self.class}`. You must either " +
+      msg = "No #{desc} specified for #{self.class}. You must either " +
             "specify a `--#{opt}` option or set a default in #{self.class}."
       validate_option(opt, desc, msg) {|val| val }
     end
     
   end
+  
+  class Option < Struct.new(:name, :desc, :opts)
+    
+    def initialize(*args)
+      super
+      self.opts ||= {}
+    end
+    
+    def default; opts[:default]; end
+    def default=(val)
+      opts[:default] = val
+    end
+    
+    def type; opts[:type]; end
+    def type=(val)
+      opts[:type] = val
+    end
+    
+    def multi; opts[:multi]; end
+    def multi=(val)
+      opts[:multi] = val
+    end
+    
+    def long; opts[:long]; end
+    def long=(val)
+      opts[:long] = val
+    end    
+    
+    def short; opts[:short]; end
+    def short=(val)
+      opts[:short] = val
+    end
+    
+    def to_args
+      [name, desc, opts]
+    end
+    
+  end
+  
 end
 
