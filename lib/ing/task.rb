@@ -21,7 +21,6 @@ module Ing
       end
       
       def default(name, val)
-        #options[name].default = val
         modify_option name, {:default => val}
       end
             
@@ -89,8 +88,7 @@ module Ing
 
     def validate_option(opt, desc=opt, msg=nil)
       msg ||= "Error in option #{desc} for `#{self.class}`."
-      !!yield(self.options[opt]) or
-        raise ArgumentError, msg
+      !!yield(self.options[opt]) or raise ArgumentError, msg
     end
     
     def validate_option_exists(opt, desc=opt)
