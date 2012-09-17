@@ -3,4 +3,3 @@
 - add Shell::Color
 - remove global Ing.shell_class, specify via color switch
 - incorporate gsub_file patch, patches to Shell
-- add acceptance tests for Ing::Task re inherited options
