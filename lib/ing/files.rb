@@ -32,12 +32,17 @@ require File.expand_path('actions/file_manipulation', File.dirname(__FILE__))
 require File.expand_path('actions/inject_into_file', File.dirname(__FILE__))
 
 
-# Interface with base class:
-#  - attr_reader :source_root, :destination_root
-#  - attr_reader :shell, :options
-#  - self.specify_options (optional; adds to it if defined)
 module Ing
   
+  # Provides filesystem actions using the same interface as Thor::Actions
+  #
+  # The target class must provide at least:
+  #   attr_reader :source_root, :destination_root
+  #   attr_reader :shell, :options
+  #
+  # Adds to target class options:
+  #   verbose, force, pretend, revoke, quiet, skip.
+  #
   module Files
 
     # a bit of trickiness to change a singleton method...

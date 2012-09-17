@@ -1,10 +1,11 @@
-﻿# Base implementation of boot dispatch
-# Mixed in to Commands::Implicit, Commands::Generate
-# Note this does NOT provide any options, only provides implementation.
-# Assumes target class will provide +namespace+ option, otherwise defaults to
-# global namespace (::Object).
-#
-module Ing
+﻿module Ing
+
+  # Base implementation of boot dispatch
+  # Mixed in to Commands::Implicit, Commands::Generate
+  # Note this does NOT provide any options, only provides implementation.
+  # Assumes target class will provide +namespace+ option, otherwise defaults to
+  # global namespace (::Object).
+  #
   module Boot
 
     # Configure the command prior to dispatch.

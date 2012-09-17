@@ -7,6 +7,7 @@
  'ing/common_options',
  'ing/boot',
  'ing/files',
+ 'ing/task',
  'ing/commands/implicit',
  'ing/commands/list',
  'ing/commands/help',

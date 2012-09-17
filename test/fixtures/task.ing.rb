@@ -34,3 +34,29 @@ class Amazing
   
 end
 
+
+
+class SimpleTask < Ing::Task
+  
+  desc  "My great task of immense importance"
+  desc  "A simple example of a task using Ing::Task"
+  usage "  ing simple_task [OPTIONS]"
+  opt   :fast, "Run it at fast speed"
+  
+  def initial_options(given)
+    { :destination => self.destination }.merge(given)
+  end
+  
+  def call
+    # ....
+  end
+  
+end
+
+class BigTask < SimpleTask
+
+  desc "Even bigger!"
+  opt :yards, "Yards of fishing line given", :type => :integer, :default => 25
+  opt :color, "Color of cloth", :type => :string, :default => 'green'
+  
+end

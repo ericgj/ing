@@ -1,5 +1,6 @@
-﻿# Common options for built-in Ing commands
-module Ing
+﻿module Ing
+
+  # Common options for built-in Ing commands
   module CommonOptions
  
     # a bit of trickiness to change a singleton method...

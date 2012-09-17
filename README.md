@@ -129,8 +129,8 @@ end
     
 As you can see, the second arg corresponds to the method name. `call` is what
 gets called when there is no second arg.  Organizing the methods like this means
-you can also do `ing test type unit`: extra non-option arguments are passed into 
-the method as parameters.  
+you can also do `ing test type custom`: extra non-option arguments are passed 
+into the method as parameters.  
 
 For more worked examples of ing tasks, see the 
 [examples](ing/blob/master/examples) directory.
@@ -140,15 +140,18 @@ For more worked examples of ing tasks, see the
 ### Option arguments
 
 Your tasks (ing subcommands) can specify what options they take by defining a 
-class method `specify_options`.  The best way to understand how this is done is 
-by example:
+class method `specify_options`.  For example:
 
 ```ruby
 class Cleanup
 
-  def self.specify_options(expect)
-    expect.opt :quiet, "Run silently"
-    expect.opt :path,  "Path to clean up", :type => :string, :default => '.'
+  def self.specify_options(spec)
+    spec.text "Clean up your path"
+    spec.text "\nUsage:"
+    spec.text "ing cleanup [OPTIONS]"
+    spec.text "\nOptions:"
+    spec.opt :quiet, "Run silently"
+    spec.opt :path,  "Path to clean up", :type => :string, :default => '.'
   end
     
   attr_accessor :options
@@ -163,11 +166,44 @@ end
 
 The syntax used in `self.specify_options` is Trollop - in fact what you are 
 doing is building a `Trollop::Parser` which then emits the parsed options into 
-your constructor. In general your constructor should just save the options to
+your constructor. 
+
+In general your constructor should just save the options to
 an instance variable like this, but in some cases you might want to do further
 processing of the passed options.
 
 [MORE](ing/blob/master/OPTIONS.md)
+
+### Using the Task base class
+
+To save some boilerplate, and to allow more flexible options specification, 
+you can inherit from `Ing::Tasks` and rewrite this example as:
+
+```ruby
+class Cleanup < Ing::Tasks
+  desc "Clean up your path"
+  usage "ing cleanup [OPTIONS]"
+  opt :quiet, "Run silently"
+  opt :path,  "Path to clean up", :type => :string, :default => '.'
+
+  # ...
+end
+```
+
+This gives you a slightly more automated help message, with the description
+lines followed by usage followed by options, and with headers for each section.
+
+`Ing::Tasks` also lets you inherit options. Say you have another task:
+
+```ruby
+class BigCleanup < Cleanup
+  opt :servers, "On servers", :type => :string, :multi => true
+end
+```
+
+This task will have the two options from its superclass as well as its own. 
+(Note the description and usage lines are _not_ inherited this way, only the 
+options).
 
 ### Generator tasks
 

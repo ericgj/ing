@@ -3,6 +3,17 @@ require 'set'
       
 module Ing
 
+  # Generic router for ing commands (both built-in and user-defined).
+  # Resolves class, parses options with Trollop if target class 
+  # defines +specify_options+, then dispatches like (simplifying):
+  #
+  #   Target.new(options).send(*args)
+  #
+  # if the target is class-like, i.e. responds to +new+. Otherwise it dispatches
+  # to the target as a callable:
+  #   
+  #   Target.call(*args, options)
+  #
   class Dispatcher
     
     # Global set of dispatched commands as [dispatch_class, dispatch_meth], 
