@@ -15,9 +15,14 @@ module Ing
         subclass.set_options self.options.dup
       end
       
-      def default(name, val)
+      def modify_option(name, specs)
         opt(name) unless options[name]
-        options[name].default = val
+        options[name].opts.merge!(specs)
+      end
+      
+      def default(name, val)
+        #options[name].default = val
+        modify_option name, {:default => val}
       end
             
       def desc(line="")
