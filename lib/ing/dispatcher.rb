@@ -46,7 +46,6 @@ module Ing
       ns                  = Util.namespaced_const_get(namespaces)
       self.dispatch_class = Util.namespaced_const_get(classes, ns)
       self.dispatch_meth  = extract_method!(args, dispatch_class)
-      self.options        = parse_options!(args, dispatch_class) || {}
       self.args           = args
       @invoking           = false
     end
@@ -103,6 +102,7 @@ module Ing
     end
     
     def execute
+      self.options = parse_options!(args, dispatch_class) || {}
       if dispatch_class.respond_to?(:new)
         cmd = dispatch_class.new(options)
         yield cmd if block_given?

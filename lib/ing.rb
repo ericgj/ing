@@ -79,22 +79,3 @@ module Ing
   end
 
 end
-
-if $0 == __FILE__
-
-  class Copier < Ing::Generator
-  
-    default :source, './test/fixtures'
-    default :dest,   './test/sandbox'
-    
-    def call
-      puts source_root, destination_root
-      directory 'doc'
-    end
-    
-  end
-  
-  Ing.run ["help", "-n", "object", "copier"]
-  Ing.run ["copier"]
-  
-end

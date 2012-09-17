@@ -42,10 +42,7 @@ class SimpleTask < Ing::Task
   desc  "A simple example of a task using Ing::Task"
   usage "  ing simple_task [OPTIONS]"
   opt   :fast, "Run it at fast speed"
-  
-  def initial_options(given)
-    { :destination => self.destination }.merge(given)
-  end
+  opt   :altitude, "Start altitude", :type => :integer
   
   def call
     # ....
@@ -58,5 +55,8 @@ class BigTask < SimpleTask
   desc "Even bigger!"
   opt :yards, "Yards of fishing line given", :type => :integer, :default => 25
   opt :color, "Color of cloth", :type => :string, :default => 'green'
+  
+  default :fast, true
+  modify_option :altitude, :short => 'l', :default => 2500
   
 end
