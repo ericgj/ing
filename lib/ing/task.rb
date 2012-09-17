@@ -17,6 +17,11 @@ module Ing
       
       # Modify the option named +name+ according to +specs+ (Hash).
       # Option will be created if it doesn't exist.
+      #
+      # Example:
+      #
+      #   modify_option :file, :required => true
+      #
       def modify_option(name, specs)
         opt(name) unless options[name]
         options[name].opts.merge!(specs)
@@ -39,14 +44,15 @@ module Ing
         usage_lines << line
       end
       
-      # Add an option, syntax identical to +Trollop::Parser#opt+
+      # Add an option. Note the syntax is identical to +Trollop::Parser#opt+
       def opt(name, desc="", settings={})
         options[name] = Option.new(name, desc, settings)
       end
       alias option opt
       
-      # Built option parser based on desc, usage, and options (including
-      # inherited options).
+      # Build option parser based on desc, usage, and options (including
+      # inherited options). This method is called by `Ing::Dispatcher`.
+      #
       def specify_options(parser)
         desc_lines.each do |line|
           parser.text line
