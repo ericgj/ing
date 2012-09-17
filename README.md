@@ -39,7 +39,7 @@ simplified to
 
 The "subcommand" is your task. To take some examples.
 
-    ing -r./path/to/some/task.rb some:task run something --verbose
+    ing -r ./path/to/some/task.rb some:task run something --verbose
     
   1. `ing -r` loads specified ruby files or libraries/gems; then
   2. it dispatches to `Some::Task.new(:verbose => true).run("something")`.
@@ -53,7 +53,7 @@ By default, it requires a file `./ing.rb` if it exists (the equivalent of
 Rakefile or Thorfile). In which case, assuming your task class is
 defined or loaded from there, the command can be simply 
 
-    ing some:task run --verbose
+    ing some:task run something --verbose
 
 ### Built-in commands
 
@@ -177,7 +177,8 @@ processing of the passed options.
 ### Using the Task base class
 
 To save some boilerplate, and to allow more flexible options specification, 
-you can inherit from `Ing::Task` and rewrite this example as:
+as well as a few more conveniences, you can inherit from `Ing::Task` and 
+rewrite this example as:
 
 ```ruby
 class Cleanup < Ing::Task
