@@ -6,10 +6,12 @@
         
     include Ing::Files
         
+    # Destination root for filesystem actions
     def destination_root
       File.expand_path(options[:dest])
     end
     
+    # Source root for filesystem actions
     def source_root
       File.expand_path(options[:source])
     end

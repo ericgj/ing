@@ -15,29 +15,38 @@ module Ing
         subclass.set_options self.options.dup
       end
       
+      # Modify the option named +name+ according to +specs+ (Hash).
+      # Option will be created if it doesn't exist.
       def modify_option(name, specs)
         opt(name) unless options[name]
         options[name].opts.merge!(specs)
       end
       
+      # Modify the default for option +name+ to +val+.
+      # Option will be created if it doesn't exist.
       def default(name, val)
         modify_option name, {:default => val}
       end
             
+      # Add a description line
       def desc(line="")
         desc_lines << line
       end
       alias description desc
       
+      # Add a usage line
       def usage(line="")
         usage_lines << line
       end
       
+      # Add an option, syntax identical to +Trollop::Parser#opt+
       def opt(name, desc="", settings={})
         options[name] = Option.new(name, desc, settings)
       end
       alias option opt
       
+      # Built option parser based on desc, usage, and options (including
+      # inherited options).
       def specify_options(parser)
         desc_lines.each do |line|
           parser.text line
@@ -56,21 +65,25 @@ module Ing
         end
       end
       
+      # Description lines
       def desc_lines
         @desc_lines ||= []
       end
       
+      # Usage lines
       def usage_lines
         @usage_lines ||= []
       end
       
+      # Options hash. Note that in a subclass, options are copied down from 
+      # superclass.
       def options
         @options ||= {}
       end
       
       protected
       
-      def set_options(o)
+      def set_options(o)  #:nodoc:
         @options = o
       end
       
@@ -81,19 +94,35 @@ module Ing
       self.options = initial_options(options)
     end
     
-    # override in subclass for special behavior
-    def initial_options(options)
-      options
+    # Override in subclass for adjusting given options on initialization
+    def initial_options(given)
+      given
     end
 
+    # Use in initialization for option validation (post-parsing).
+    #
+    # Example:
+    #
+    #   validate_option(:color, "Color must be :black or :white") do |actual|
+    #     [:black, :white].include?(actual)
+    #   end
+    #
     def validate_option(opt, desc=opt, msg=nil)
       msg ||= "Error in option #{desc} for `#{self.class}`."
       !!yield(self.options[opt]) or raise ArgumentError, msg
     end
     
+    # Validate that the option was passed or otherwise defaulted to something truthy.
+    # Note that in most cases, instead you should set :required => true on the option
+    # and let Trollop catch the error -- rather than catching it post-parsing.
+    #
+    # Note +validate_option_exists+ will raise an error if the option is passed 
+    # but false or nil, unlike the Trollop parser.
+    #
     def validate_option_exists(opt, desc=opt)
       msg = "No #{desc} specified for #{self.class}. You must either " +
-            "specify a `--#{opt}` option or set a default in #{self.class}."
+            "specify a `--#{opt}` option or set a default in #{self.class} or " +
+            "in its superclass(es)."
       validate_option(opt, desc, msg) {|val| val }
     end
     
