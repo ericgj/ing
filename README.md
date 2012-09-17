@@ -177,10 +177,10 @@ processing of the passed options.
 ### Using the Task base class
 
 To save some boilerplate, and to allow more flexible options specification, 
-you can inherit from `Ing::Tasks` and rewrite this example as:
+you can inherit from `Ing::Task` and rewrite this example as:
 
 ```ruby
-class Cleanup < Ing::Tasks
+class Cleanup < Ing::Task
   desc "Clean up your path"
   usage "ing cleanup [OPTIONS]"
   opt :quiet, "Run silently"
@@ -193,7 +193,7 @@ end
 This gives you a slightly more automated help message, with the description
 lines followed by usage followed by options, and with headers for each section.
 
-`Ing::Tasks` also lets you inherit options. Say you have another task:
+`Ing::Task` also lets you inherit options. Say you have another task:
 
 ```ruby
 class BigCleanup < Cleanup
