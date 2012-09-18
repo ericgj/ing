@@ -40,25 +40,10 @@ module Ing
   #   attr_reader :source_root, :destination_root
   #   attr_reader :shell, :options
   #
-  # Adds to target class options:
-  #   verbose, force, pretend, revoke, quiet, skip.
+  # and should provide these options (otherwise all defaulted nil):
+  # verbose, force, pretend, revoke, quiet, skip.
   #
   module Files
-
-    # a bit of trickiness to change a singleton method...
-    def self.included(base)
-      meth = base.method(:specify_options) if base.respond_to?(:specify_options)
-      base.send(:define_singleton_method, :specify_options) do |expect|
-        meth.call(expect) if meth
-        expect.text "\nCommon Options:"
-        expect.opt :verbose, "Run verbosely by default", :short => nil
-        expect.opt :force, "Overwrite files that already exist", :short => nil
-        expect.opt :pretend, "Run but do not make any changes", :short => nil
-        expect.opt :revoke, "Revoke action (not available for all generators)", :short => nil
-        expect.opt :quiet, "Suppress status output", :short => nil
-        expect.opt :skip, "Skip files that already exist", :short => nil
-      end
-    end
 
     def pretend?
       !!options[:pretend]

@@ -3,6 +3,12 @@
         
     opt :dest, "Destination root", :type => :string
     opt :source, "Source root", :type => :string
+    opt :verbose, "Run verbosely by default"
+    opt :force, "Overwrite files that already exist"
+    opt :pretend, "Run but do not make any changes"
+    opt :revoke, "Revoke action (not available for all generators)"
+    opt :quiet, "Suppress status output"
+    opt :skip, "Skip files that already exist"
         
     include Ing::Files
         

@@ -11,8 +11,18 @@ module Ing
 
     class << self
     
+      attr_accessor :inherited_options
+      
       def inherited(subclass)
-        subclass.set_options self.options.dup
+        subclass.inherited_options = self.options.dup
+      end
+      
+      def inherited_option?(name)
+        inherited_options.has_key?(name)
+      end
+      
+      def option?(name)
+        options.has_key?(name)
       end
       
       # Modify the option named +name+ according to +specs+ (Hash).
@@ -23,8 +33,13 @@ module Ing
       #   modify_option :file, :required => true
       #
       def modify_option(name, specs)
-        opt(name) unless options[name]
-        options[name].opts.merge!(specs)
+        if inherited_option?(name)
+          inherited_options[name].opts.merge!(specs)
+        elsif option?(name)
+          options[name].opts.merge!(specs)
+        else
+          opt(name, '', specs)
+        end
       end
       
       # Modify the default for option +name+ to +val+.
@@ -69,6 +84,12 @@ module Ing
             parser.opt *opt.to_args
           end
         end
+        unless inherited_options.empty?
+          parser.text "\nCommon Options:"
+          inherited_options.each do |name, opt|
+            parser.opt *opt.to_args
+          end
+        end
       end
       
       # Description lines
@@ -82,7 +103,7 @@ module Ing
       end
       
       # Options hash. Note that in a subclass, options are copied down from 
-      # superclass.
+      # superclass into inherited_options.
       def options
         @options ||= {}
       end
@@ -105,6 +126,31 @@ module Ing
       given
     end
 
+    # Build a hash of options that weren't given from command line via +ask+
+    # (i.e., $stdin.gets).
+    #
+    # Note it currently does not cast options to appropriate types.
+    # Also note because the shell is not available until after initialization,
+    # this must be called from command method(s), e.g. +#call+
+    #
+    def ask_unless_given(*opts)
+      opts.inject({}) do |memo, opt|
+        next memo if options[:"#{opt}_given"]
+        msg = self.class.options[opt].desc + "?"
+        df  = self.class.options[opt].default
+        memo[opt] = shell.ask(msg, :default => df)
+        memo
+      end
+    end
+    
+    # Shortcut for:
+    #
+    #   options.merge! ask_unless_given :opt1, :opt2
+    #
+    def ask_unless_given!(*opts)
+      self.options.merge! ask_unless_given(*opts)
+    end
+    
     # Use in initialization for option validation (post-parsing).
     #
     # Example:

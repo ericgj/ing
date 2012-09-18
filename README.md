@@ -32,8 +32,8 @@ The ing command line is generally parsed as
 
     [ing command] [ing command options] [subcommand] [args] [subcommand options]
     
-But in cases where the first argument isn't an built-in ing command or options, it's 
-simplified to
+But in cases where the first argument isn't a built-in ing command or options, 
+it's simplified to
 
     [subcommand] [args] [subcommand options]
 

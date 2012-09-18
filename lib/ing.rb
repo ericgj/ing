@@ -79,3 +79,26 @@ module Ing
   end
 
 end
+
+if $0 == __FILE__
+
+  class Asker < Ing::Generator
+  
+    opt :one, "First", :type => :string, :required => true
+    opt :two, "Second", :default => "hello"
+    opt :three, "Third"
+    
+    default :source, File.dirname(__FILE__) 
+    default :dest,   Dir.pwd
+    
+    def call
+      ask_unless_given! :one, :two, :three
+      puts options.inspect
+    end
+    
+  end
+  
+  Ing.run ["help", "-n", "object", "asker"]
+  Ing.run ["asker", "--one", "1"]
+  
+end
