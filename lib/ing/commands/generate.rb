@@ -26,6 +26,11 @@ module Ing
         @generator_root ||= File.expand_path(options[:gen_root])
       end
       
+      attr_accessor :options
+      def initialize(options)
+        self.options = options
+      end
+      
       # Require libs and ing_file, then
       # locate and require the generator ruby file identified by the first arg,
       # before dispatching to it.

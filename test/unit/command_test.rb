@@ -186,7 +186,9 @@ describe Ing::Command do
         parser = MiniTest::Mock.new
         parser.expect(:parser,nil)
         parser.expect(:"parse!",ret,[args]) 
-        parser
+        parserclass = MiniTest::Mock.new
+        parserclass.expect(:new, parser)
+        parserclass
       end
       
       def expecting_parser_given(args, ret={})

@@ -23,12 +23,7 @@
     def configure_command(cmd)
       cmd.shell = Ing.shell_class.new if cmd.respond_to?(:"shell=")
     end
-    
-    def namespace
-      return ::Object unless ns = options[:namespace]
-      Util.decode_class(ns)
-    end
-    
+
     # Main processing of arguments and dispatch from command line (+Ing.run+)
     # Note that three hooks are provided for target classes, 
     #   +before+::  runs before any processing of arguments or dispatch of command
@@ -37,7 +32,7 @@
     #
     def call(*args)
       before *args
-      klass         = extract_class!(args, namespace)
+      klass         = _extract_class!(args)
       Command.new(klass, *args).execute do |cmd|
         configure_command cmd
       end
@@ -46,8 +41,13 @@
 
     private
     
-    def extract_class!(args, ns)
-      Util.decode_class(args.shift, ns)
+    def _extract_class!(args)
+      Util.decode_class(args.shift, _namespace_class)
+    end
+    
+    def _namespace_class
+      return ::Object unless ns = options[:namespace]
+      Util.decode_class(ns)
     end
     
   end

@@ -36,13 +36,17 @@
         require_ing_file
       end
     
-      def call(cmd="help")
+      def call(cmd="help")      
         before
-        ns        = Ing::Util.to_class_names(options[:namespace] || 'object')
-        cs        = Ing::Util.to_class_names(cmd)
-        help = Dispatcher.new(ns, cs).help
-        shell.say help.read
+        klass         = Util.decode_class(cmd, _namespace_class)
+        help = Command.new(klass).help
+        shell.say help
       end
+      
+      def _namespace_class
+        return ::Object unless ns = options[:namespace]
+        Util.decode_class(ns)
+      end      
       
     end
     

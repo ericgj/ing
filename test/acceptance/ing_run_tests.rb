@@ -8,7 +8,7 @@ describe Ing do
   end
 
   def reset
-    Ing::Dispatcher.dispatched.clear
+    Ing::Callstack.clear
   end
   
   describe "#run" do

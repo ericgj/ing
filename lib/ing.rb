@@ -20,7 +20,17 @@ end
 
 module Ing
   extend self
+    
+  Error = Class.new(StandardError)
+  FileNotFoundError = Class.new(Error)
   
+  attr_writer :shell_class
+
+  def shell_class
+    @shell_class ||= Shell::Basic
+  end
+      
+      
   class << (Callstack = Object.new)
     
     def index(klass, meth)
@@ -51,27 +61,36 @@ module Ing
     execute booter, *args
   end
   
-  def execute(klass, meth=:call, opts={}, &config)
-    Command.execute(klass, meth, opts, &config)
-    Callstack.push(klass, meth.to_sym)
+  def execute(klass, meth=:call, *args, &config)
+    cmd = command.new(klass, meth, *args)
+    _callstack.push(cmd.command_class, cmd.command_meth)
+    cmd.execute(&config)
   end
   
-  def invoke(klass, meth=:call, opts={}, &config)
-    execute(klass, meth, opts, &config) unless executed?(klass, meth)
+  def invoke(klass, meth=:call, *args, &config)
+    execute(klass, meth, *args, &config) unless executed?(klass, meth)
   end
   
   def executed?(klass, meth)
-    !!Callstack.index(klass, meth)
+    !!_callstack.index(klass, meth)
   end
   
   def callstack
-    Callstack.to_a
+    _callstack.to_a
   end
   
   private
   
+  def command
+    Command
+  end
+  
+  def _callstack
+    Callstack
+  end
+  
   def implicit_booter
-    Ing::Commands::Implicit
+    Commands::Implicit
   end
   
   def extract_boot_class!(args)

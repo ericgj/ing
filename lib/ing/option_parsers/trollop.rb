@@ -19,13 +19,13 @@ module Ing
       def describe
         s=StringIO.new
         parser.educate_banner s
-        s.rewind; s.to_s      
+        s.rewind; s.read      
       end
       
       def help
         s=StringIO.new
         parser.educate s
-        s.rewind; s.to_s      
+        s.rewind; s.read      
       end
       
     end

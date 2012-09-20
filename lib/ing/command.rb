@@ -5,7 +5,7 @@
     class << self
       attr_writer :parser
       def parser
-        @parser ||= OptionParsers::Trollop.new  
+        OptionParsers::Trollop
       end
       
       def execute(klass, *args, &config)
@@ -46,7 +46,7 @@
     
     def with_option_parser
       return {} unless command_class.respond_to?(:specify_options)
-      p = self.class.parser
+      p = self.class.parser.new
       command_class.specify_options(p.parser)
       yield p
     end
