@@ -51,4 +51,26 @@ describe Ing::Task do
     
   end
   
+  describe "triple inheritance" do
+  
+    subject { ["mega_task"] }
+    
+    it "help should display all the options defined by the task and its superclasses" do
+      output = capture_help(subject)
+      assert_match(/^\s*--fast/, output)
+      assert_match(/^\s*--altitude/, output)
+      assert_match(/^\s*--yards/, output)
+      assert_match(/^\s*--color/, output)
+      assert_match(/^\s*--gallons/, output)
+      assert_match(/^\s*--insurance/, output)
+    end
+    
+    it "run should reflect modifications to superclass options" do
+      output = capture_help(subject)
+      assert_match(/^\s*--fast:.+/, output)
+      assert_match(/^\s*--color.+\(default: blue\)/, output)      
+    end
+    
+  end
+  
 end

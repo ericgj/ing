@@ -60,3 +60,14 @@ class BigTask < SimpleTask
   modify_option :altitude, :short => 'l', :default => 2500
   
 end
+
+class MegaTask < BigTask
+
+  desc "Monsterous"
+  opt :gallons, "Gallons of paint", :type => :integer, :default => 45
+  opt :insurance, "Has insurance"
+  
+  default :fast, false
+  modify_option :color, :default => "blue"
+  
+end

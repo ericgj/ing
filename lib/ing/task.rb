@@ -13,8 +13,10 @@ module Ing
     
       attr_accessor :inherited_options
       
+      # On subclassing, deep copy the merge of current options into inherited
+      # options
       def inherited(subclass)
-        subclass.inherited_options = self.options.dup
+        subclass.inherited_options = Marshal.load(Marshal.dump(self.all_options))
       end
       
       def inherited_option?(name)
@@ -106,6 +108,10 @@ module Ing
       # superclass into inherited_options.
       def options
         @options ||= {}
+      end
+      
+      def all_options
+        (inherited_options || {}).merge(options)
       end
       
       protected
