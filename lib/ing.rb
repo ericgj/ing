@@ -1,18 +1,19 @@
 ﻿['ing/version',
+ 'ing/util',
  'ing/lib_trollop',
  'ing/trollop/parser',
- 'ing/util',
- 'ing/dispatcher',
+ 'ing/option_parsers/trollop',
  'ing/shell',
  'ing/common_options',
- 'ing/boot',
  'ing/files',
  'ing/task',
  'ing/generator',
+ 'ing/command',
+ 'ing/commands/boot',
  'ing/commands/implicit',
+ 'ing/commands/generate',
  'ing/commands/list',
- 'ing/commands/help',
- 'ing/commands/generate'
+ 'ing/commands/help'
 ].each do |f| 
   require_relative f
 end
@@ -20,85 +21,64 @@ end
 module Ing
   extend self
   
-  Error = Class.new(StandardError)
-  FileNotFoundError = Class.new(Error)
-  
-  attr_writer :shell_class
-
-  def shell_class
-    @shell_class ||= Shell::Basic
-  end
-      
-  def implicit_booter
-    ["Implicit"]
-  end
-  
-  # Dispatch command line to boot class (if specified, or Implicit otherwise), 
-  # which in turn dispatches the command after parsing args. 
-  #
-  # Note boot dispatch happens within +Ing::Commands+ namespace.
-  #
-  def run(argv=ARGV)
-    booter = extract_boot_class!(argv) || implicit_booter
-    run_boot booter, "call", *argv
-  end
-  
-  # Dispatch to the command via +Ing::Boot#call_invoke+
-  # Use this when you want to invoke a command from another command, but only
-  # if it hasn't been run yet. For example,
-  #
-  #   invoke Some::Task, :some_instance_method, some_argument, :some_option => true
-  #
-  # You can skip the method and it will assume +#call+ :
-  #
-  #   invoke Some::Task, :some_option => true
-  def invoke(klass, *args)
-    run_boot implicit_booter, "call_invoke", klass, *args
+  class << (Callstack = Object.new)
+    
+    def index(klass, meth)
+      stack.index {|e| e == [klass,meth]}
+    end
+    
+    def push(klass, meth)
+      stack << [klass, meth]
+    end
+    
+    def clear
+      stack.clear
+    end
+    
+    def to_a
+      stack.dup
+    end
+    
+    private
+    def stack
+      @stack ||= []
+    end
+    
   end
   
-  # Dispatch to the command via +Ing::Boot#call_execute+
-  # Use this when you want to execute a command from another command, and you
-  # don't care if it has been run yet or not. See equivalent examples for 
-  # +invoke+.
-  #
-  def execute(klass, *args)
-    run_boot implicit_booter, "call_execute", klass, *args
+  def run(args=ARGV)
+    booter = extract_boot_class!(args) || implicit_booter
+    execute booter, *args
+  end
+  
+  def execute(klass, meth=:call, opts={}, &config)
+    Command.execute(klass, meth, opts, &config)
+    Callstack.push(klass, meth.to_sym)
+  end
+  
+  def invoke(klass, meth=:call, opts={}, &config)
+    execute(klass, meth, opts, &config) unless executed?(klass, meth)
+  end
+  
+  def executed?(klass, meth)
+    !!Callstack.index(klass, meth)
+  end
+  
+  def callstack
+    Callstack.to_a
   end
   
   private
   
-  def run_boot(booter, *args)
-    Dispatcher.new(["Ing","Commands"], booter, *args).dispatch
+  def implicit_booter
+    Ing::Commands::Implicit
   end
   
   def extract_boot_class!(args)
-    c = Util.to_class_names(args.first)
-    if (Commands.const_defined?(c.first, false) rescue nil)
-      args.shift; c
-    end
+    c = Util.decode_class(args.first, Ing::Commands)
+    args.shift; c
+  rescue NameError
+    nil
   end
-
-end
-
-if $0 == __FILE__
-
-  class Asker < Ing::Generator
-  
-    opt :one, "First", :type => :string, :required => true
-    opt :two, "Second", :default => "hello"
-    opt :three, "Third"
-    
-    default :source, File.dirname(__FILE__) 
-    default :dest,   Dir.pwd
-    
-    def call
-      ask_unless_given! :one, :two, :three
-      puts options.inspect
-    end
-    
-  end
-  
-  Ing.run ["help", "-n", "object", "asker"]
-  Ing.run ["asker", "--one", "1"]
   
 end

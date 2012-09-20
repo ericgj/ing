@@ -1,5 +1,4 @@
 ﻿require File.expand_path('../test_helper', File.dirname(__FILE__))
-require File.expand_path('../../lib/ing/command', File.dirname(__FILE__))
 
 describe Ing::Command do
 
