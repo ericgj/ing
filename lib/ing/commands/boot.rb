@@ -33,7 +33,7 @@
     def call(*args)
       before *args
       klass         = _extract_class!(args)
-      Command.new(klass, *args).execute do |cmd|
+      Ing.execute(klass, *args) do |cmd|
         configure_command cmd
       end
       after

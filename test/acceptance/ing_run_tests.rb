@@ -11,6 +11,12 @@ describe Ing do
     Ing::Callstack.clear
   end
   
+  def count_executions_of(klass, meth)
+    Ing.callstack.count {|(k, m)| 
+      k == klass && m == meth
+    }    
+  end
+    
   describe "#run" do
 
     describe "no method or args given" do
@@ -150,6 +156,13 @@ describe Ing do
     it 'should run with expected output' do
       assert_equal "1\n2\n3\n", capture_run(subject)
     end
+    
+    it 'should only list one execution in the call stack for invoked commands' do
+      capture_run(subject)
+      assert_equal 1, count_executions_of(Invoking::Counter, :one)
+      assert_equal 1, count_executions_of(Invoking::Counter, :two)
+      assert_equal 1, count_executions_of(Invoking::Counter, :three)
+    end
   end
   
   describe "executing within tasks" do
@@ -159,6 +172,14 @@ describe Ing do
     it 'should run with expected output' do
       assert_equal "1\n2\n3\n3\n", capture_run(subject)
     end    
+    
+    it 'should only list each execution in the call stack for executed commands' do
+      capture_run(subject)
+      assert_equal 1, count_executions_of(Executing::Counter, :one)
+      assert_equal 1, count_executions_of(Executing::Counter, :two)
+      assert_equal 2, count_executions_of(Executing::Counter, :three)
+    end
+    
   end
   
 end
