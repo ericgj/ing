@@ -46,6 +46,7 @@ module Ing
       
       # Modify the default for option +name+ to +val+.
       # Option will be created if it doesn't exist.
+      #
       def default(name, val)
         modify_option name, {:default => val}
       end
@@ -68,7 +69,8 @@ module Ing
       alias option opt
       
       # Build option parser based on desc, usage, and options (including
-      # inherited options). This method is called by `Ing::Dispatcher`.
+      # inherited options). This method is called by `Ing::Command`.
+      # Note that this assumes the syntax of the Trollop parser.
       #
       def specify_options(parser)
         desc_lines.each do |line|
