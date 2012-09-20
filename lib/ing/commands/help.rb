@@ -43,6 +43,7 @@
         shell.say help
       end
       
+      private
       def _namespace_class
         return ::Object unless ns = options[:namespace]
         Util.decode_class(ns)

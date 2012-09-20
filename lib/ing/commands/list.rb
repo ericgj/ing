@@ -36,28 +36,32 @@
         require_ing_file
       end
       
-      def call(namespace=options[:namespace])
+      def call(ns=nil)
         before
-        ns        = Ing::Util.to_class_names(namespace)
-        mod       = Ing::Util.namespaced_const_get(ns)
+        mod       = _namespace_class(ns)
         data = mod.constants.map do |c|
-          desc = Dispatcher.new(ns, [c]).describe
-          [ "ing #{Ing::Util.encode_class_names(ns + [c])}", 
-            (desc.gets || '(no description)').chomp
+          klass = mod.const_get(c)
+          desc = (Command.new(klass).describe || '')[/.+$/]
+          [ "ing #{Ing::Util.encode_class(mod)}:#{Ing::Util.encode_class_names([c])}", 
+            (desc || '(no description)').chomp
           ]
         end.sort
-        shell.say desc_lines(ns, data).join("\n")
+        shell.say desc_lines(mod, data).join("\n")
       end
       
       private 
+      def _namespace_class(ns=options[:namespace])
+        return ::Ing::Commands unless ns
+        Util.decode_class(ns)
+      end      
                   
-      def desc_lines(ns, data)
+      def desc_lines(mod, data)
         colwidths = data.inject([0,0]) {|max, (line, desc)| 
           max[0] = line.length if line.length > max[0]
           max[1] = desc.length if desc.length > max[1]
           max
         }
-        ["#{ns.join(' ')}: all tasks",
+        ["#{mod}: all tasks",
          "-" * 80
         ] +
         data.map {|line, desc|
