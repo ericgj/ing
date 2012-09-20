@@ -231,9 +231,9 @@ describe Ing::Command do
         let(:options)        { {:one => 1, :two => 2, :three => 3} }
         let(:parsed_options) { {:two => 2, :four => 4, :three => 1} }
         
-        it "should merge passed options with the options parsed from other args" do
+        it "should merge passed options into the options parsed from other args" do
           expecting_parser_given(args, parsed_options) do
-            merged_options = options.merge(parsed_options)
+            merged_options = parsed_options.merge(options)
             it = subject.instance
             # note dummy.options returns what it was passed in constructor
             assert_equal merged_options, it.options   

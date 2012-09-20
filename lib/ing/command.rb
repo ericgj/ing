@@ -75,7 +75,7 @@
       with_option_parser {|p| p.help}
     end
     
-    def with_option_parser   # :nodoc:
+    def with_option_parser
       return {} unless command_class.respond_to?(:specify_options)
       p = self.class.parser
       command_class.specify_options(p.parser)
@@ -89,8 +89,10 @@
       classy? ? command_class.new(options) : command_class
     end
  
+    # Note options merged into parsed options (reverse merge)
+    # so that passed options (in direct invoke or execute) override defaults
     def parse_options!
-      self.options.merge! parsed_options_from_args
+      self.options = parsed_options_from_args.merge(self.options)
     end
     
     # memoized to avoid duplicate args processing
