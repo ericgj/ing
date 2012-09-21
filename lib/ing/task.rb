@@ -112,6 +112,8 @@ module Ing
         @options ||= {}
       end
       
+      # Options merged into inherited options. This is only used by the
+      # +inherited+ hook (on subclassing), and should not be used otherwise.
       def all_options
         (inherited_options || {}).merge(options)
       end
