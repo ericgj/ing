@@ -25,6 +25,22 @@
       list.inject(base) {|m, klass| m.const_get(klass, false)}
     end
     
+    # search for {modules, callables} under base
+    # note this does not pick up aliased constants right now
+    def ing_commands(base, recurse=false, init={})
+      base.constants(false).each do |c|
+        v = base.const_get(c)
+        next if init.values.include?(v)
+        if v.respond_to?(:constants)
+          init[ encode_class(v) ] = v
+          ing_commands(v,true,init) if recurse
+        elsif v.respond_to?(:call)
+          init[ encode_class_names(base.to_s.split('::') + [c]) ] = v
+        end
+      end
+      init
+    end
+    
     def option?(arg)
       !!(/^-{1,2}/ =~ arg)
     end

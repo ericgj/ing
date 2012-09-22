@@ -1,62 +1,27 @@
 ﻿require 'rake-pipeline'
-  
-  # This is Rake::Pipeline::CLI rewritten as an Ing task
-  # instead of Thor
-  # cf. https://github.com/livingsocial/rake-pipeline
-  #
-  # Stick this in your ing.rb and you can simply run
-  #   ing pipeline
-  # to build your project.
-  # 
-  # Namespace it if you wish; but note Rake::Pipeline is already taken.
-  #
-  class Pipeline < Ing::Task
-  
-    desc "Rake pipeline"
-    usage "  ing pipeline build   " +
-          "# Build the project (default task)."
-    usage "  ing pipeline clean   " +
-          "# Remove the pipeline's temporary and output files."
-    usage "  ing pipeline server  " +
-          "# Run the Rake::Pipeline preview server."
-    opt :assetfile, "Asset file", :default => "Assetfile", :short => "c"
-    opt :pretend
-    opt :clean, "Clean before building"
 
-    # ing pipeline
-    # default task == build
-    def call
-      build
-    end
-    
-    # ing pipeline build
-    def build
-      if options[:pretend]
-        project.output_files.each do |file|
-          shell.say_status :create, relative_path(file)
-        end
-      else
-        options[:clean] ? clean : project.cleanup_tmpdir
-        project.invoke
-      end
-    end
+# This is Rake::Pipeline::CLI rewritten as an Ing task
+# instead of Thor
+# cf. https://github.com/livingsocial/rake-pipeline
+#
+# Stick this in your ing.rb and you can simply run
+#
+#   ing pipeline:build
+#
+# to build your project, or
+#
+#   ing pipeline
+#
+# to start the preview server (equivalent to +rakep+)
+#         
+module Pipeline
 
-    # ing pipeline clean
-    def clean
-      if options[:pretend]
-        project.files_to_clean.each do |file|
-          shell.say_status :remove, relative_path(file)
-        end
-      else
-        project.clean
-      end
-    end
-    
-    # ing pipeline server
-    def server
-      require "rake-pipeline/server"
-      Rake::Pipeline::Server.new.start
-    end
+  # default == server
+  def self.call(*args)
+    Ing.execute Server, *args
+  end
+
+  module Helpers
 
     private
     
@@ -73,4 +38,61 @@
     end
           
   end
+ 
+  class Build < Ing::Task
+    include Helpers
+    
+    desc "Build the project."
+    usage "  ing pipeline build"
+    opt :assetfile, "Asset file", :default => "Assetfile", :short => "c"
+    opt :pretend
+    opt :clean, "Clean before building"
+    
+    # ing pipeline build
+    def call
+      if options[:pretend]
+        project.output_files.each do |file|
+          shell.say_status :create, relative_path(file)
+        end
+      else
+        options[:clean] ? Ing.invoke(Clean, options) : project.cleanup_tmpdir
+        project.invoke
+      end
+    end
+
+  end
   
+  class Clean < Ing::Task
+    include Helpers
+  
+    desc "Remove the pipeline's temporary and output files."
+    usage "  ing pipeline clean"
+    opt :pretend
+          
+    # ing pipeline clean
+    def call
+      if options[:pretend]
+        project.files_to_clean.each do |file|
+          shell.say_status :remove, relative_path(file)
+        end
+      else
+        project.clean
+      end
+    end
+
+  end
+  
+  class Server < Ing::Task
+    
+    desc  "Run the Rake::Pipeline preview server (default task)."
+    usage "  ing pipeline server"
+    
+    # ing pipeline server
+    def call
+      require "rake-pipeline/server"
+      Rake::Pipeline::Server.new.start
+    end
+
+  end
+    
+end
