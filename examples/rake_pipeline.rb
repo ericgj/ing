@@ -45,7 +45,7 @@
     def clean
       if options[:pretend]
         project.files_to_clean.each do |file|
-          say_status :remove, relative_path(file)
+          shell.say_status :remove, relative_path(file)
         end
       else
         project.clean
