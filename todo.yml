@@ -1,6 +1,7 @@
 ﻿Ing todo
 ---
 - add tests for List, Help built-in commands
+- make Help search conventions compatible with List
 - add Shell::Color
 - remove global Ing.shell_class, specify via color switch
 - incorporate gsub_file patch, patches to Shell
