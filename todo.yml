@@ -1,8 +1,8 @@
 ﻿Ing todo
 ---
+- add tests for List, Help built-in commands
 - add Shell::Color
 - remove global Ing.shell_class, specify via color switch
 - incorporate gsub_file patch, patches to Shell
-- add tests for List, Help built-in commands
 - rewrite README centered on simplest usages and move the rest to MORE pages
 - nicer error handling for bad input
