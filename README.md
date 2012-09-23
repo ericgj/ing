@@ -24,6 +24,11 @@ Option parsing courtesy of the venerable and excellent
 
     gem install ing
     
+To generate a default `ing.rb` file that loads from a `tasks` directory:
+    
+    ing setup
+    
+
 ## A quick tour
 
 ### The command line
