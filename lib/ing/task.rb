@@ -11,7 +11,8 @@ module Ing
 
     class << self
     
-      attr_accessor :inherited_options
+      attr_writer :inherited_options
+      def inherited_options; @inherited_options ||= {}; end
       
       # On subclassing, deep copy the merge of current options into inherited
       # options

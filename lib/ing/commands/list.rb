@@ -42,7 +42,7 @@
       
       def call(s=nil)
         before
-        if s && !options[:namespace_given]
+        if !options[:namespace_given]
           search_all s
         else
           search s

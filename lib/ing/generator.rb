@@ -1,6 +1,7 @@
 ﻿module Ing
   class Generator < Task
         
+    desc "(internal)"
     opt :dest, "Destination root", :type => :string
     opt :source, "Source root", :type => :string
     opt :verbose, "Run verbosely by default"

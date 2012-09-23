@@ -13,7 +13,8 @@
  'ing/commands/implicit',
  'ing/commands/generate',
  'ing/commands/list',
- 'ing/commands/help'
+ 'ing/commands/help',
+ 'ing/commands/setup'
 ].each do |f| 
   require_relative f
 end
