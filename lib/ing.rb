@@ -8,6 +8,7 @@
  'ing/files',
  'ing/task',
  'ing/generator',
+ 'ing/default_command',
  'ing/command',
  'ing/commands/boot',
  'ing/commands/implicit',

@@ -17,9 +17,8 @@
 module Pipeline
 
   # default == server
-  def self.call(*args)
-    Ing.execute Server, *args
-  end
+  extend Ing::DefaultCommand
+  default_command :Server
 
   module Helpers
 
