@@ -63,7 +63,7 @@ defined or loaded from there, the command can be simply
 ### Built-in commands
 
 Ing has some built-in commands. These are still being implemented, but
-you can see what they are so far with `ing list`.
+you can see what they are so far with `ing list -n ing:commands`.
 
 The most significant subcommand is `generate` or `g`, which
 simplifies a common and familiar use-case (at the expense of some file-
