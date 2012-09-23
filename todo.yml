@@ -2,8 +2,9 @@
 ---
 - add tests for List, Help built-in commands
 - make Help search conventions compatible with List
+- add RCov to look for other corners that need tests
 - add Shell::Color
 - remove global Ing.shell_class, specify via color switch
 - incorporate gsub_file patch, patches to Shell
 - rewrite README centered on simplest usages and move the rest to MORE pages
-- nicer error handling for bad input
+- nicer error handling for bad input that shows Ing callstack as well as ruby callstack

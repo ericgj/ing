@@ -13,7 +13,9 @@
 #   ing pipeline
 #
 # to start the preview server (equivalent to +rakep+)
-#         
+#
+# It's an example of using mixin inheritance with Ing::Task classes.
+#     
 module Pipeline
 
   # default == server

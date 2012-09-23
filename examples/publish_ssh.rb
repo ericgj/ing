@@ -2,26 +2,14 @@
 # with some improvements.
 # cf. https://github.com/jimweirich/rake/blob/master/lib/rake/contrib/sshpublisher.rb
 #
+# It's an example of using class inheritance with Ing::Task classes
+#
 module Publish
 
   module Ssh 
 
     extend Ing::DefaultCommand
     default_command :Dir
-
-    # this is a bit too obscure as a way to define a default task within a 
-    # namespace... needed in order to set the shell via execute block as the
-    # boot process does.
-    #
-    # maybe something like  extend DefaultCommand; default_command Publish:Ssh::Dir
-#    class << self 
-#      attr_accessor :shell
-#      def call(*args)
-#        Ing.execute Publish::Ssh::Dir, *args do |cmd| 
-#          cmd.shell = self.shell
-#        end
-#      end
-#    end
     
     # Base class and options for all SSH publisher classes
     # Publisher classes should at minimum define +shell_commands+ (array of shell

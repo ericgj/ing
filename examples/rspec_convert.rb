@@ -1,6 +1,10 @@
-﻿# Usage:
+﻿# A task to convert rspec 'should/not' matchers to minitest 'assert/refute'.
+#
+# Usage:
 # ing rspec:convert    which is equivalent to
 # ing rspec:convert files './{test,spec}/**/*.rb' --convert-dir 'converted'
+#
+# It's an example of a plain ruby class implementation of a task.
 #
 module Rspec
 
