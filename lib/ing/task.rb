@@ -113,8 +113,7 @@ module Ing
         @options ||= {}
       end
       
-      # Options merged into inherited options. This is only used by the
-      # +inherited+ hook (on subclassing), and should not be used otherwise.
+      # Options merged into inherited options. 
       def all_options
         (inherited_options || {}).merge(options)
       end
@@ -146,9 +145,11 @@ module Ing
     #
     def ask_unless_given(*opts)
       opts.inject({}) do |memo, opt|
+        raise ArgumentError, "No option `#{opt}` for `#{self.class}`" \
+          unless self.class.all_options.has_key?(opt)
         next memo if options[:"#{opt}_given"]
-        msg = self.class.options[opt].desc + "?"
-        df  = self.class.options[opt].default
+        msg = self.class.all_options[opt].desc + "?"
+        df  = self.class.all_options[opt].default
         memo[opt] = shell.ask(msg, :default => df)
         memo
       end

@@ -11,13 +11,16 @@
       def self.specify_options(parser)
         parser.banner "List all tasks by name or in specified namespace"
         parser.text "\nUsage:"
-        parser.text "  ing list                # list all built-in ing commands"
+        parser.text "  ing list                # list all known commands that have a description"
         parser.text "  ing list -n rspec       # list all commands in rspec namespace"
-        parser.text "  ing list rspec          # search for commands that match /.*rspec/ (in any namespace)"
-        parser.text "  ing list rspec --all    # include modules that don't have a description in list (not recommended)"
-        parser.text "  ing list -n rspec conv  # search for commands that match /.*conv/ in rspec namespace"
+        parser.text "  ing list rspec          # list commands that match /.*rspec/ (in any namespace)"
+        parser.text "  ing list rspec --all    # list modules that don't have a description (not recommended!)"
+        parser.text "  ing list -n rspec conv  # list commands that match /.*conv/ in rspec namespace"
         parser.text "\nOptions:"
-        parser.opt :all, "List all tasks including modules that don't have a description", :default => false
+        parser.opt :all, "List all tasks including modules that don't have a description", 
+                   :default => false
+        parser.opt :strict, "List only tasks that are strictly within specified namespace", 
+                   :default => false
       end
       
       include Ing::CommonOptions
@@ -49,12 +52,12 @@
         end
       end
       
-      def search(s)
-        _do_search(_namespace_class, %r|.*#{s}|, false)
+      def search(s, recurse=!options[:strict])
+        _do_search(_namespace_class, %r|.*#{s}|, recurse)
       end
       
-      def search_all(s)
-        _do_search(::Object, %r|.*#{s}|, true)
+      def search_all(s, recurse=!options[:strict])
+        _do_search(::Object, %r|.*#{s}|, recurse)
       end
       
       private 
