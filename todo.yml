@@ -1,6 +1,6 @@
 ﻿Ing todo
 ---
-- add tests for List, Help built-in commands
+- add tests for Help built-in commands
 - make Help search conventions compatible with List
 - add RCov to look for other corners that need tests
 - add Shell::Color
