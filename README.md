@@ -3,8 +3,7 @@
 
 or gratuitous backronym: <b>I</b> <b>N</b>eed a <b>G</b>enerator! 
 
-Ing is a scripting and command-line API micro-toolkit designed around the 
-following opinions: 
+Ing is a task scripting micro-toolkit designed around the following opinions: 
 
 - Ruby itself is a domain-specific language for scripting (among other things), 
 it has great facilities for dealing with filesystems, processes, network IO, 
