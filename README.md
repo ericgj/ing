@@ -194,7 +194,7 @@ end
 ```
 
 The syntax used in `self.specify_options` is Trollop - in fact what you are 
-doing is building a `Trollop::Parser` which then emits the parsed options into 
+doing is building a `Trollop::Parser` which then sends the parsed options into 
 your constructor. 
 
 In general your constructor should just save the options to
