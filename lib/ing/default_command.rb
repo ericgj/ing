@@ -57,7 +57,7 @@
       raise ArgumentError, 
             "No default command set for `#{self}`. Did you call `default_command :Default` ?" \
         unless self.default_command
-      Ing.execute(self.const_get(default_command), *args) do |cmd|
+      Ing.execute(self.const_get(default_command, false), *args) do |cmd|
         cmd.shell = self.shell if cmd.respond_to?(:"shell=")
       end
     end
