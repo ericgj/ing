@@ -12,6 +12,7 @@ load File.join(File.dirname(__FILE__), "fixtures", "task.ing.rb")
 load File.join(File.dirname(__FILE__), "fixtures", "group.ing.rb")
 load File.join(File.dirname(__FILE__), "fixtures", "invok.ing.rb")
 load File.join(File.dirname(__FILE__), "fixtures", "list.ing.rb")
+load File.join(File.dirname(__FILE__), "fixtures", "help.ing.rb")
 
 module TestHelpers
 

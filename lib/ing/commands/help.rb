@@ -11,8 +11,10 @@
       def self.specify_options(parser)
         parser.text "Display help on specified command"
         parser.text "\nUsage:"
-        parser.text "  ing help generate               # help on built-in command generate"
-        parser.text "  ing help --namespace test unit  # help on command within namespace"
+        parser.text "  ing help generate               # help on built-in command 'generate'"
+        parser.text "  ing help unit --namespace test  # help on command 'unit' within namespace 'test'"
+        parser.text "  ing help --namespace test:unit  # another syntax"
+        parser.text "  ing help test:unit              # yet another syntax"
         parser.text "  ing help                        # display this message"
       end
       
@@ -36,16 +38,36 @@
         require_ing_file
       end
     
-      def call(cmd="help")      
+      def call(cmd=nil)      
         before
-        klass         = Util.decode_class(cmd, _namespace_class)
+        if options[:namespace_given]
+          if cmd
+            _do_help cmd, _namespace_class
+          else
+            _do_help _namespace_class
+          end
+        else
+          if cmd
+            if /:/ =~ cmd
+              _do_help cmd
+            else
+              _do_help cmd, _namespace_class
+            end
+          else
+            _do_help 'help', _namespace_class
+          end
+        end
+      end
+      
+      private
+      
+      def _do_help(cmd, ns=::Object)
+        klass = Util.decode_class(cmd, ns)
         help = Command.new(klass).help
         shell.say help
       end
       
-      private
-      def _namespace_class
-        return ::Object unless ns = options[:namespace]
+      def _namespace_class(ns=options[:namespace])
         Util.decode_class(ns)
       end      
       

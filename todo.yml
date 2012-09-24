@@ -1,7 +1,5 @@
 ﻿Ing todo
 ---
-- add tests for Help built-in commands
-- make Help search conventions compatible with List
 - add RCov to look for other corners that need tests
 - add Shell::Color
 - remove global Ing.shell_class, specify via color switch
