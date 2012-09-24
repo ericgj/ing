@@ -6,21 +6,21 @@ or gratuitous backronym: <b>I</b> <b>N</b>eed a <b>G</b>enerator!
 Ing is a scripting and command-line API micro-toolkit designed around the 
 following opinions: 
 
-- **Ruby itself is a domain-specific language for scripting** (among other things), 
+- Ruby itself is a domain-specific language for scripting (among other things), 
 it has great facilities for dealing with filesystems, processes, network IO, 
 interacting with the shell, etc;
 
-- In addition, **Ruby's object model gives you most of what you need** for 
+- In addition, Ruby's object model gives you most of what you need for 
 organizing your code into tasks to be run from the command line, for dependency 
 management, handling errors, etc.
 
-- Sometimes **the functionality your tasks implement you want to make use of 
-within other programs, not only from the shell**. You don't want to have to 
+- Sometimes the functionality your tasks implement you want to make use of 
+within other programs, not only from the shell. You don't want to have to 
 either (a) wade through the scripting framework to figure out how to get to it, 
 or (b) refactor your tasks into separate modules and classes.
 
-- **A framework (any framework, in any context) should not encourage bad design 
-at the expense of supposed simplicity of the interface**. A framework should 
+- A framework (any framework, in any context) should not encourage bad design 
+at the expense of supposed simplicity of the interface. A framework should 
 get out of the way as much as possible.
 
 ## Introduction
