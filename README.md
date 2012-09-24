@@ -79,6 +79,8 @@ loads from a `tasks` directory:
     
     ing setup
     
+## Usage
+
 ### Built-in commands
 
 Ing has some built-in commands. You can see what they are (so far) with 
