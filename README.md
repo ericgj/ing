@@ -3,69 +3,91 @@
 
 or gratuitous backronym: <b>I</b> <b>N</b>eed a <b>G</b>enerator! 
 
-(Note this is a work-in-progress. Expect some quirkiness.)
+Ing is a scripting and command-line API micro-toolkit designed around the 
+following opinions: 
 
-The command-line syntax is similar to Thor's, and it incorporates Thor's 
-(Rails') generator methods and shell conventions like
+- **Ruby itself is a domain-specific language for scripting** (among other things), 
+it has great facilities for dealing with filesystems, processes, network IO, 
+interacting with the shell, etc;
+
+- In addition, **Ruby's object model gives you most of what you need** for 
+organizing your code into tasks to be run from the command line, for dependency 
+management, handling errors, etc.
+
+- Sometimes **the functionality your tasks implement you want to make use of 
+within other programs, not only from the shell**. You don't want to have to 
+either (a) wade through the scripting framework to figure out how to get to it, 
+or (b) refactor your tasks into separate modules and classes.
+
+- **A framework (any framework, in any context) should not encourage bad design 
+at the expense of supposed simplicity of the interface**. A framework should 
+get out of the way as much as possible.
+
+## Introduction
+
+The core of what Ing provides is a _router_ and built-in _option parser_ (using 
+the venerable and excellent [Trollop](http://trollop.rubyforge.org/)) that maps 
+the command line to your ruby classes and methods, using simple conventions.
+
+For example, this:
+
+```bash
+ing some:task run something --verbose
+```
+
+in the most typical scenario, routes to:
+
+```ruby
+Some::Task.new(:verbose => true).run("something")
+```
+
+or if Some::Task is not a class but a proc or other 'callable', routes to:
+
+```ruby
+Some::Task.call(:run, "something", :verbose => true)
+```
+
+As you can see, although the implementation is completely different, the 
+command-line syntax is similar to Thor's. 
+
+In addition, Ing includes Thor's (Rails') generator methods and conventions 
+so you can do things like this within your tasks:
 
 ```ruby
 if yes? 'process foo files?', :yellow
   inside('foo') { create_file '%foo_file%.rb' }
 end
 ``` 
-but _unlike_ Thor or Rake, it does not define its own DSL. Your tasks correspond 
-to plain ruby classes and methods. Ing just handles routing from the command line 
-to them, and setting options. Your classes (or even Procs) do the rest.
 
-Option parsing courtesy of the venerable and excellent
-[Trollop](http://trollop.rubyforge.org/), under the hood.
+Unlike Thor or Rake, Ing does not define its own DSL. Your tasks correspond 
+to plain ruby objects and methods. Ing just handles routing from the command 
+line to them, and setting options. Your classes or procs do the rest.
+
+As we will see, there are some base classes your tasks can inherit from that 
+cut down on boilerplate code for common scenarios, but they are there only for 
+convenience: your task classes/procs are not required to be coupled to the 
+framework at all.
+
+[MORE](ing/blob/master/SYNTAX.md)
 
 ## Installation
 
     gem install ing
     
-To generate a default `ing.rb` file that loads from a `tasks` directory:
+To generate a default `ing.rb` file (similar to Rakefile or Thorfile), that 
+loads from a `tasks` directory:
     
     ing setup
     
-
-## A quick tour
-
-### The command line
-
-The ing command line is generally parsed as 
-
-    [ing command] [ing command options] [subcommand] [args] [subcommand options]
-    
-But in cases where the first argument isn't a built-in ing command or options, 
-it's simplified to
-
-    [subcommand] [args] [subcommand options]
-
-The "subcommand" is your task. To take some examples.
-
-    ing -r ./path/to/some/task.rb some:task run something --verbose
-    
-  1. `ing -r` loads specified ruby files or libraries/gems; then
-  2. it dispatches to `Some::Task.new(:verbose => true).run("something")`.
-
-(Assuming you define a task `Some::Task#run`, in `/path/to/some/task.rb`.)
-
-You can -r as many libaries/files as you like. Of course, that gets pretty 
-long-winded. 
-
-By default, it requires a file `./ing.rb` if it exists (the equivalent of 
-Rakefile or Thorfile). In which case, assuming your task class is
-defined or loaded from there, the command can be simply 
-
-    ing some:task run something --verbose
-
 ### Built-in commands
 
-Ing has some built-in commands. These are still being implemented, but
-you can see what they are so far with `ing list -n ing:commands`.
+Ing has some built-in commands. You can see what they are (so far) with 
+`ing list -n ing:commands`.  And you can get help on a command with 
+`ing help ...`.
 
-The most significant subcommand is `generate` or `g`, which
+### Generator tasks
+
+The most significant built-in Ing command is `generate` or `g`, which
 simplifies a common and familiar use-case (at the expense of some file-
 system conventions):
 
@@ -78,7 +100,7 @@ and preloaded into ruby. They can be parsed as either:
   2. A __subdirectory__ of the root dir, in which case it attempts to
   preload `ing.rb` within that subdirectory: e.g. __some/task/ing.rb__
 
-The command above is then dispatched as normal to 
+So the command above is then dispatched as normal to 
 `Some::Task.new(:force => true).call`  (`#call` is used if no method is
 specified). So you should put the task code within that namespace in the
 preloaded file.
@@ -86,7 +108,7 @@ preloaded file.
 (By default, the generator root directory is specified by 
 `ENV['ING_GENERATORS_ROOT']` or failing that, `~/.ing/generators`.)
 
-_TODO: more examples needed_
+[MORE](#)
 
 ### A simple example of a plain old ruby task
 
@@ -179,7 +201,7 @@ processing of the passed options.
 
 [MORE](ing/blob/master/OPTIONS.md)
 
-### Using the Task base class
+### Using the Ing::Task base class
 
 To save some boilerplate, and to allow more flexible options specification, 
 as well as a few more conveniences, you can inherit from `Ing::Task` and 
@@ -250,7 +272,7 @@ Also, `include Ing::Files` _after_ you specify any options (this is because
 `Ing::Files` adds several options automatically).
 
 If you prefer, you can inherit from `Ing::Generator`, which gives you all of 
-the above defaults, plus the functionality of `Ing::Task`.
+the above defaults more or less, plus the functionality of `Ing::Task`.
 
 Like `Ing::Task`, `Ing::Generator` is simply a convenience for common scenarios.
 
@@ -261,14 +283,8 @@ Like `Ing::Task`, `Ing::Generator` is simply a convenience for common scenarios.
 I wanted to use Thor's generator methods and shell conventions to write my own
 generators. But I didn't want to fight against Thor's hijacking of ruby classes.
 
-### Brief note about the design
-
-One of the design principles is to limit inheritance (classical and mixin), and
-most importantly to _avoid introducing new state via inheritance_. An important
-corollary of this is that the _application objects_, ie. your task classes, 
-must themselves take responsibility for their interface with the underlying
-resources they mix in or compose, instead of those resources providing the 
-interface (via so-called macro-style class methods, for instance).
+I love Rake, but find it much too easy to write horribly unmaintainable code in
+its DSL, and always fight with its nonstandard command-line syntax.
 
 ## Q & A
 
@@ -276,11 +292,11 @@ interface (via so-called macro-style class methods, for instance).
 
 That's what `require` and `||=` are for ;)
 
-Seriously, you do have `Ing.invoke Some::Task, :some_method` and `Ing.execute ...`
-for this kind of thing. Personally I think it's a code smell to put reusable
-code in things that are _also_ run from the command line. Is it application or
-library code? Controller or model? But `invoke` is there if you must, hopefully 
-with a suitably ugly syntax to dissuade you. :P
+Seriously, you do have `Ing.invoke Some::Task, :some_method` for this kind of 
+thing. Personally I think it's a code smell to put reusable code in things that 
+are _also_ run from the command line. Is it application or library code? 
+Controller or model? But `invoke` is there if you must, hopefully with a 
+suitably ugly syntax to dissuade you. :P
 
 ### But what about security?
 
