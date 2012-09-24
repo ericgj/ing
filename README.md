@@ -72,7 +72,7 @@ system conventions):
     ing generate some:task --force
 
 Unlike Thor/Rails generators, these don't need to be packaged up as gems
-and preloaded into ruby. They can be either parsed as:
+and preloaded into ruby. They can be parsed as either:
 
   1. A __file__ relative to a root dir: e.g. __some/task__, or
   2. A __subdirectory__ of the root dir, in which case it attempts to
