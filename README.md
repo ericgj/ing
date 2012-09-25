@@ -18,6 +18,9 @@ within other programs, not only from the shell. You don't want to have to
 either (a) wade through the scripting framework to figure out how to get to it, 
 or (b) refactor your tasks into separate modules and classes.
 
+- In particular, you want to be able to test your tasks independently of the
+framework.
+
 - A framework (any framework, in any context) should not encourage bad design 
 at the expense of supposed simplicity of the interface. A framework should 
 get out of the way as much as possible.
