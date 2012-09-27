@@ -19,7 +19,7 @@ class MyCounter
   attr_accessor :destination_root, :options, :first, :second, :shell
   
   def shell
-    @shell ||= Ing.shell_class.new
+    @shell ||= Ing::Shell::Basic.new
   end
   
   def initialize(options)
@@ -61,7 +61,7 @@ class WhinyGenerator
   attr_accessor :destination_root, :options, :shell
   
   def shell
-    @shell ||= Ing.shell_class.new
+    @shell ||= Ing::Shell::Basic.new
   end
 
   def initialize(options)

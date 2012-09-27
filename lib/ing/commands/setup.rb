@@ -34,7 +34,7 @@ _____
       
       private
       def setup_shell
-        self.shell = Ing.shell_class.new
+        self.shell = Ing::Shell::Color.new
       end
       
     end

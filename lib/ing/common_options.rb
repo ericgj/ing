@@ -9,6 +9,7 @@
       base.send(:define_singleton_method, :specify_options) do |expect|
         meth.call(expect) if meth
         expect.text "\nCommon Options:"
+        expect.opt :color, "Display output in color", :default => true
         expect.opt :debug, "Display debug messages"        
         expect.opt :namespace, "Top-level namespace",
                    :type => :string, :default => base::DEFAULTS[:namespace]
@@ -18,6 +19,10 @@
                    :type => :string, :short => 'f', 
                    :default => base::DEFAULTS[:ing_file]
       end
+    end
+    
+    def color?
+      !!options[:color]
     end
     
     def debug?
@@ -34,6 +39,10 @@
     
     def namespace
       options[:namespace]
+    end
+    
+    def shell_class
+      color? ? Ing::Shell::Color : Ing::Shell::Basic
     end
     
     # require relative paths relative to the Dir.pwd
@@ -54,7 +63,7 @@
       f = File.expand_path(ing_file)
       require_libs(f) if f && File.exists?(f)
     end
-
+    
     # Internal debugging
     def debug(*msgs)
       if debug?

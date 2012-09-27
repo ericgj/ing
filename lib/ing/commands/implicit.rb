@@ -31,6 +31,10 @@ module Ing
         require_ing_file
       end
       
+      def configure_command(cmd)
+        cmd.shell = shell_class.new if cmd.respond_to?(:"shell=")
+      end
+      
     end
 
   end

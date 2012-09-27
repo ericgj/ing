@@ -26,12 +26,6 @@ module Ing
   Error = Class.new(StandardError)
   FileNotFoundError = Class.new(Error)
   
-  attr_writer :shell_class
-
-  def shell_class
-    @shell_class ||= Shell::Basic
-  end
-      
       
   class << (Callstack = Object.new)
     

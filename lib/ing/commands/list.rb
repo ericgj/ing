@@ -25,12 +25,7 @@
       
       include Ing::CommonOptions
       
-      attr_accessor :options 
-      attr_writer :shell
-      
-      def shell
-        @shell ||= ::Ing.shell_class.new
-      end
+      attr_accessor :options, :shell
       
       def initialize(options)
         self.options = options
@@ -41,6 +36,7 @@
       def before
         require_libs
         require_ing_file
+        self.shell = shell_class.new
       end
       
       def call(s=nil)

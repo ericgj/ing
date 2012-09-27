@@ -39,6 +39,10 @@ module Ing
         require_ing_file      
         require_generator args.first
       end
+
+      def configure_command(cmd)
+        cmd.shell = shell_class.new if cmd.respond_to?(:"shell=")
+      end
       
       private
           
