@@ -36,10 +36,10 @@ module Db
     end
     
     def call(url=nil)
-      models? ? models : keys(url)
+      models? ? models : schema(url)
     end
     
-    def keys(url=nil)
+    def schema(url=nil)
       url = (options[:db] ||= url)
       raise ArgumentError,
         "You must specify a database URL, or manually assign DB=" \
