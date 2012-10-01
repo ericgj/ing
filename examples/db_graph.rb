@@ -23,13 +23,16 @@ module Db
 
     opt :db,       "Sequel database URL (optional)", :type => :string
     opt :db_const, "Constant reference to database (optional)", 
-        :type => :string, :default => 'DB'
+          :type => :string, :default => 'DB'
     opt :label,    "Label for graph", :type => :string
     opt :models,   "Load models in file(s)", :type => :strings
+    opt :one_to_many, "Show one-to-many relations (default false)", 
+          :default => false
     
-    def models?; options[:models_given]; end
-    def db?;     !!options[:db];     end
-    def label;   options[:label_given] ? options[:label] : nil;  end
+    def models?;      options[:models_given];                         end
+    def db?;          !!options[:db];                                 end
+    def label;        options[:label_given] ? options[:label] : nil;  end
+    def one_to_many?; options[:one_to_many];                          end
     
     def init_options(given)
       self.options = given
@@ -88,15 +91,18 @@ module Db
               when :many_to_one
                 [ Array(ar[:key]), Array(ar[:primary_key] || [:id]) ]
               when :many_to_many
-                [ [nil], [nil] ]
+                [ Array(ar[:left_key]), Array(ar[:right_key]) ]
               end
-            associations << Edge.new(
-                              c.table_name, 
-                              ar[:type], 
-                              ac.table_name,
-                              fr_cols,
-                              to_cols
-                            )
+              
+            unless (ar[:type] == :one_to_many and not one_to_many?)
+              associations << Edge.new(
+                                c.table_name, 
+                                ar[:type], 
+                                ac.table_name,
+                                fr_cols,
+                                to_cols
+                              )
+            end
           end
         end
       end
