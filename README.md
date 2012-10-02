@@ -163,6 +163,10 @@ gets called when there is no second arg.  Organizing the methods like this means
 you can also do `ing test type custom`: extra non-option arguments are passed 
 into the method as parameters.  
 
+Note in most real cases you would want to namespace your tasks, and not use
+a top-level class named Test (which would fail in some ruby versions in fact). 
+This is just to give you a flavor.
+
 For more worked examples of ing tasks, see the 
 [examples](ing/blob/master/examples) directory.
 
