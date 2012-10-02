@@ -215,9 +215,11 @@ module Ing
       #
       # ==== Options
       # indent<Integer>:: Indent each line of the printed paragraph by indent value.
+      # hanging<Boolean>:: Hanging indent (first line is not indented).
       #
       def print_wrapped(message, options={})
         indent = options[:indent] || 0
+        hanging = !!options[:hanging]
         width = terminal_width - indent
         paras = message.split("\n\n")
 
@@ -228,8 +230,14 @@ module Ing
         end
 
         paras.each do |para|
-          para.split("\n").each do |line|
-            stdout.puts line.insert(0, " " * indent)
+          para.split("\n").each_with_index do |line,i|
+            stdout.puts(
+              if hanging && i==0 
+                line
+              else
+                line.insert(0, " " * indent)
+              end
+            )
           end
           stdout.puts unless para == paras.last
         end
@@ -298,7 +306,8 @@ module Ing
         string
       end
 
-    protected
+    # stupid, why protect?
+    #protected
 
       def lookup_color(color)
         return color unless color.is_a?(Symbol)
