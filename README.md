@@ -89,6 +89,9 @@ Ing has some built-in commands. You can see what they are (so far) with
 `ing list -n ing:commands`.  And you can get help on a command with 
 `ing help ...`.
 
+**NEW**: Ing now provides bash auto-completion (hooray!). Copy 
+[the script](ing/blob/master/completions/ing.bash) to your OS' bash-completions directory, or source it manually, and tab away.
+
 ### Generator tasks
 
 The most significant built-in Ing command is `generate` or `g`, which
