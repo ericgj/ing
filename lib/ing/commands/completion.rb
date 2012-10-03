@@ -6,7 +6,7 @@ module Ing
     #
     # ing completion p        # print commands starting with p (recursively)
     # ing completion p:       # print commands in namespace p (recursively)
-    # ing completion p:q      # print public methods in namespace p:q
+    # ing completion p:q<sp>  # print public methods in namespace p:q
     # ing completion p:q r    # print public methods in namespace p:q starting with r
     #
     class Completion
