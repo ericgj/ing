@@ -13,9 +13,9 @@
         parser.text "\nUsage:"
         parser.text "  ing list                # list all known commands that have a description"
         parser.text "  ing list -n rspec       # list all commands in rspec namespace"
-        parser.text "  ing list rspec          # list commands that match /.*rspec/ (in any namespace)"
+        parser.text "  ing list rspec          # list commands that match /^rspec/ (in any namespace)"
         parser.text "  ing list rspec --all    # list modules that don't have a description (not recommended!)"
-        parser.text "  ing list -n rspec conv  # list commands that match /.*conv/ in rspec namespace"
+        parser.text "  ing list -n rspec conv  # list commands that match /^conv/ in rspec namespace"
         parser.text "\nOptions:"
         parser.opt :all, "List all tasks including modules that don't have a description", 
                    :default => false
@@ -50,17 +50,17 @@
       end
       
       def search(s, recurse=!options[:strict])
-        _say_search(_namespace_class, %r|.*#{s}|, recurse)
+        _say_search(_namespace_class, %r|^#{s}|, recurse)
       end
       
       def search_all(s, recurse=!options[:strict])
-        _say_search(::Object, %r|.*#{s}|, recurse)
+        _say_search(::Object, %r|^#{s}|, recurse)
       end
       
       private 
       
       def _namespace_class(ns=options[:namespace])
-        Util.decode_class(ns)
+        Ing::Util.decode_class(ns)
       end      
             
       def _say_search(mod, expr, recurse)
@@ -94,7 +94,7 @@
       end
             
       def _filtered_commands(mod, recurse, expr)
-        Util.ing_commands(mod, recurse).select {|(cmd, klass)|
+        Ing::Util.ing_commands(mod, recurse).select {|(cmd, klass)|
           expr =~ cmd
         }
       end

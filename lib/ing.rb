@@ -13,8 +13,9 @@
  'ing/commands/boot',
  'ing/commands/implicit',
  'ing/commands/generate',
- 'ing/commands/list',
  'ing/commands/help',
+ 'ing/commands/list',
+ 'ing/commands/completion',
  'ing/commands/setup'
 ].each do |f| 
   require_relative f

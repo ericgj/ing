@@ -30,7 +30,7 @@
     end
     
     def requires
-      options[:require]
+      options[:require] || []
     end
     
     def ing_file
@@ -60,6 +60,7 @@
     end
 
     def require_ing_file
+      return unless ing_file
       f = File.expand_path(ing_file)
       require_libs(f) if f && File.exists?(f)
     end
