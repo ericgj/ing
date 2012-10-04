@@ -15,6 +15,7 @@
  'ing/commands/generate',
  'ing/commands/help',
  'ing/commands/list',
+ 'ing/commands/gemify',
  'ing/commands/completion',
  'ing/commands/setup'
 ].each do |f| 
