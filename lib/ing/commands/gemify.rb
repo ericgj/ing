@@ -1,3 +1,5 @@
+require 'pathname'
+
 module Ing
   module Commands
   
@@ -7,9 +9,9 @@ module Ing
       EXECUTABLE_TEMPLATE = <<_____
 #!/usr/bin/env ruby
 require 'ing'
-require File.expand_path('../<%= ing_file %>', File.dirname(__FILE__))
-<% relative_requires.each do |r| %>
-require File.expand_path('../<%= r %>', File.dirname(__FILE__))
+require File.expand_path('<%= relative_path_from_bindir(ing_file) %>', File.dirname(__FILE__))
+<% relative_requires_from_bindir.each do |r| %>
+require File.expand_path('<%= r %>', File.dirname(__FILE__))
 <% end %> 
 Ing.execute <%= command.command_class %>, :<%= command.command_meth %>, *ARGV
 _____
@@ -82,6 +84,18 @@ _____
       
       def relative_requires
         requires.select {|r| /\A(:?\.|\/)/ =~ r}
+      end
+      
+      def relative_requires_from_bindir
+        relative_requires.map {|r|
+          relative_path_from_bindir(r)
+        }
+      end
+      
+      def relative_path_from_bindir(file)
+        sub = Pathname.new(File.expand_path(bindir))
+        f   = Pathname.new(File.expand_path(file))
+        f.relative_path_from(sub)
       end
       
       def gem_requires

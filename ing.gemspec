@@ -23,7 +23,7 @@ rest.
   s.require_paths = ["lib"]
   s.executables   << 'ing'
   
-  s.required_ruby_version ">= 1.9"
+  s.required_ruby_version = ">= 1.9"
   
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'fakeweb'
