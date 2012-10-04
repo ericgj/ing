@@ -53,6 +53,8 @@ _____
         parser.opt :install, "Install gem after build", 
                      :default=>DEFAULTS[:install]
         parser.opt :name, "Name of executable", :type=>:string
+        
+        # TODO implement cleanup
         parser.opt :cleanup, "Remove gems, gemspecs, and executables after install",
                      :default=>DEFAULTS[:cleanup]
         parser.opt :version, "Version of gem", :type=>:string,
