@@ -1,4 +1,4 @@
-﻿module Ing
+module Ing
   VERSION = '0.2.12'
   VERSION_MAJOR = VERSION.split('.')[0]
   VERSION_MINOR = VERSION.split('.')[1]
