@@ -5,12 +5,10 @@ module Ing
   
     class Gemify
 
-      # TODO fix this for nonstandard bindir
       EXECUTABLE_TEMPLATE = <<_____
 #!/usr/bin/env ruby
 require 'ing'
-require File.expand_path('<%= relative_path_from_bindir(ing_file) %>', File.dirname(__FILE__))
-<% relative_requires_from_bindir.each do |r| %>
+<% gem_files_from_bindir.each do |r| %>
 require File.expand_path('<%= r %>', File.dirname(__FILE__))
 <% end %> 
 Ing.execute <%= command.command_class %>, :<%= command.command_meth %>, *ARGV
@@ -27,11 +25,10 @@ EOF
   s.description = <<EOF
 <%= command.help %>
 EOF
-  s.files       << '<%= ing_file %>'
-  s.files       += %w[ <%= relative_requires.join(',') %> ]
+  s.files       += %w[ <%= gem_files.join(',') %> ]
   s.executables << '<%= executable_name %>'
-  s.add_runtime_dependency 'ing', '~><%= Ing::VERSION %>'
-  <% gem_requires.each do |r| %>
+  s.add_runtime_dependency 'ing', '~><%= [Ing::VERSION_MAJOR, Ing::VERSION_MINOR].join('.') %>'
+  <% runtime_deps.each do |r| %>
   s.add_runtime_dependency '<%= r %>'
   <% end %>
 end
@@ -42,6 +39,7 @@ _____
          ing_file:  'ing.rb',
          bindir:    'bin',
          version:   '0.0.1',
+         pretend:   false,
          install:   true,
          cleanup:   false,
          author:    ENV['USER']
@@ -52,23 +50,26 @@ _____
         parser.opt :author, "Gem author", :default=>DEFAULTS[:author]
         parser.opt :bindir, "Executable directory", :type=>:string, 
                      :default=>DEFAULTS[:bindir]
-        parser.opt :install, "Install gem after build", 
-                     :default=>DEFAULTS[:install]
-        parser.opt :name, "Name of executable", :type=>:string
-        
         # TODO implement cleanup
         parser.opt :cleanup, "Remove gems, gemspecs, and executables after install",
-                     :default=>DEFAULTS[:cleanup]
+                     :default=>DEFAULTS[:cleanup], :short=>:z
+        parser.opt :deps, "Gem files and runtime dependencies to include", :type=>:strings, :short=>:g
+        parser.opt :install, "Install gem after build", 
+                     :default=>DEFAULTS[:install], :short=>:x
+        parser.opt :name, "Name of executable", :type=>:string, :short=>:e
+        parser.opt :pretend, "Do not write files or build/install gems", 
+                     :default=>DEFAULTS[:pretend]
         parser.opt :version, "Version of gem", :type=>:string,
                      :default=>DEFAULTS[:version]
-        parser.stop_on_unknown
       end
       
       include Ing::CommonOptions
+      include Ing::Files
       
-      def bindir;  options[:bindir];    end
-      def version; options[:version];  end
-      def author;  options[:author];  end
+      def bindir;   options[:bindir];     end
+      def version;  options[:version];    end
+      def author;   options[:author];     end
+      def pretend?; !!options[:pretend];  end
       
       def executable_name
         @executable_name ||= (options[:name_given] ? options[:name] : nil)
@@ -81,15 +82,23 @@ _____
       def gemspec_file
         "#{executable_name}.gemspec"
       end
-      
-      def relative_requires
-        requires.select {|r| /\A(:?\.|\/)/ =~ r}
+
+      def deps
+        options[:deps] || []
+      end
+            
+      def gem_files
+        deps.select {|r| /\A(:?\.|\/)/ =~ r}
+      end    
+
+      def gem_files_from_bindir
+        gem_files.map {|f|
+          relative_path_from_bindir(f)
+        }
       end
       
-      def relative_requires_from_bindir
-        relative_requires.map {|r|
-          relative_path_from_bindir(r)
-        }
+      def runtime_deps
+        deps - gem_files
       end
       
       def relative_path_from_bindir(file)
@@ -98,12 +107,17 @@ _____
         f.relative_path_from(sub)
       end
       
-      def gem_requires
-        requires - relative_requires
+      def destination_root
+        Dir.pwd
+      end
+
+      def source_root
+        File.expand_path(File.dirname(__FILE__))
       end
       
       attr_writer :executable_name
-      attr_accessor :options, :command
+      attr_accessor :options, :command, :shell
+  
       def initialize(options)
         self.options = options
       end
@@ -112,11 +126,15 @@ _____
         @before ||= begin
           require_libs
           require_ing_file
+          self.shell = shell_class.new
           _init_command(*args)
           true
         end
       end
 
+      def after
+      end
+      
       def call(ns=nil, *args)
         before ns, *args
         bin; gemspec; build; install if options[:install]
@@ -124,26 +142,26 @@ _____
       
       def bin(ns=nil, *args)
         before ns, *args
-        File.open(self.executable_file, 'w+') do |f|
-          f.write _erb.new(EXECUTABLE_TEMPLATE).result(binding)
-        end
+        create_file self.executable_file,
+                    _erb.new(EXECUTABLE_TEMPLATE).result(binding)
       end
       
       def gemspec(ns=nil, *args)
         before ns, *args
-        File.open(self.gemspec_file, 'w+') do |f|
-          f.write _erb.new(GEMSPEC_TEMPLATE).result(binding)
-        end
+        create_file self.gemspec_file,
+                    _erb.new(GEMSPEC_TEMPLATE).result(binding)
       end
       
       def build(ns=nil, *args)
         before ns, *args
-        `gem build #{self.gemspec_file}`
+        x = "gem build #{self.gemspec_file}"
+        pretend? ? shell.say(x) : `#{x}`
       end
       
       def install(ns=nil, *args)
         before ns, *args
-        `gem install #{self.executable_name}-#{self.version} --local`
+        x = "gem install #{self.executable_name}-#{self.version} --local"
+        pretend? ? shell.say(x) : `#{x}`
       end
       
       private
@@ -158,7 +176,7 @@ _____
       end      
       
       def _executable_name_from_command(cmd)
-        Ing::Util.encode_class(cmd.command_class).gsub(':','-')
+        'ing-' + Ing::Util.encode_class(cmd.command_class).gsub(':','-')
       end
 
       def _erb
