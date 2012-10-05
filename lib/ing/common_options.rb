@@ -13,8 +13,8 @@
         expect.opt :debug, "Display debug messages"        
         expect.opt :namespace, "Top-level namespace",
                    :type => :string, :default => base::DEFAULTS[:namespace]
-        expect.opt :require, "Require file or library before running", 
-                   :type => :strings
+        expect.opt :require, "Require file or library before running (multi)", 
+                   :multi => true, :type => :string
         expect.opt :ing_file, "Default task file (ruby)", 
                    :type => :string, :short => 'f', 
                    :default => base::DEFAULTS[:ing_file]
