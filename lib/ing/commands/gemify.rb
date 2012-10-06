@@ -46,7 +46,34 @@ _____
       }
 
       def self.specify_options(parser)
-        parser.text "Build and install a gem executable for the given command"
+        parser.text "Build and install a gem executable for the given task."
+        parser.text <<_____
+
+This automates the generation of a 'standalone' executable for your task, so you
+can call it directly from the command line and also redistribute it as a gem.
+It's mainly intended for 'ad-hoc-ish' tasks you want to share between your
+projects or among a small team, rather than truly standalone command line apps 
+to be made generally available on rubygems, etc.
+
+The gemspec it generates is bare-bones. If you need a more elaborate config, you
+can use this and the executable as a starting point, and edit them by hand 
+before distributing.
+_____
+        parser.text "\nUsage:"
+        parser.text "# Generate executable, gemspec, build and install gem named ing-my-task"
+        parser.text "  ing gemify my:task --deps ./tasks/my_task.rb"
+        parser.text "\n# Same thing, but don't install gem automatically"
+        parser.text "  ing gemify my:task --no-install --deps ./tasks/my_task.rb"
+        parser.text "\n# If your task has gem dependencies"
+        parser.text "  ing gemify my:task --deps ./tasks/my_task.rb activerecord"
+        parser.text "\n# You can provide a custom name, version, author"
+        parser.text "  ing gemify my:task --name my-gem --version '0.1.2' --author 'Herbie' \\ \n" +
+                    "    --deps ./tasks/my_task.rb"
+        parser.text "\n# Only generate executable, to custom directory"
+        parser.text "  ing gemify bin my:task --bindir tasks/bin"
+        parser.text "\n# Only generate gemspec"
+        parser.text "  ing gemify gemspec my:task --deps ./tasks/my_task.rb"
+        parser.text "\nOptions:"
         parser.opt :author, "Gem author", :default=>DEFAULTS[:author]
         parser.opt :bindir, "Executable directory", :type=>:string, 
                      :default=>DEFAULTS[:bindir]
@@ -56,7 +83,7 @@ _____
         parser.opt :deps, "Gem files and runtime dependencies to include", :type=>:strings, :short=>:g
         parser.opt :install, "Install gem after build", 
                      :default=>DEFAULTS[:install], :short=>:x
-        parser.opt :name, "Name of executable", :type=>:string, :short=>:e
+        parser.opt :name, "Name of executable (default: ing-#\{task\})", :type=>:string, :short=>:e
         parser.opt :pretend, "Do not write files or build/install gems", 
                      :default=>DEFAULTS[:pretend]
         parser.opt :version, "Version of gem", :type=>:string,

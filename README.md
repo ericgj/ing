@@ -289,6 +289,12 @@ Like `Ing::Task`, `Ing::Generator` is simply a convenience for common scenarios.
 
 [MORE](ing/blob/master/GENERATORS.md)
 
+## Standalone executables
+
+You can use Ing to generate 'standalone' executables from your tasks, so you
+can call it directly from the command line and also redistribute it (as a gem).
+For more details see `ing help gemify`.
+
 ## Motivation
 
 I wanted to use Thor's generator methods and shell conventions to write my own
