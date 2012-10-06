@@ -309,21 +309,26 @@ its DSL, and always fight with its nonstandard command-line syntax.
 
 That's what `require` and `||=` are for ;)
 
-Seriously, you do have `Ing.invoke Some::Task, :some_method` for this kind of 
-thing. Personally I think it's a code smell to put reusable code in things that 
-are _also_ run from the command line. Is it application or library code? 
-Controller or model? But `invoke` is there if you must, hopefully with a 
-suitably ugly syntax to dissuade you. :P
+Seriously, you do have `Ing.invoke Some::Task, :some_method` if you want a 
+declarative way to say, from any point in your codebase, that you only want the
+depended-on task to run only if it hasn't already. 
 
-### But what about security?
+But before you do, please consider:
 
-Yes, this means any ruby library and even built-in classes can be exercised from
-the command line... but so what?
+- If your case is _invoking a task only once within the same module_, you 
+should probably simply design your methods so they are called that way in plain 
+ruby.
 
-1. You can't run module methods, and the objects you invoke need to have a
-hash constructor. So Kernel, Process, IO, File, etc. are pretty much ruled out.
-Most of the ruby built-in classes are ruled out in fact.
+- If your case is _running some bit of setup code_ that is shared among several 
+tasks that would otherwise _not_ be executed as a task itself, `Ing.invoke` is
+overkill. The code should be refactored so that it's accessible to the several
+tasks, but not implemented as a task itself.
 
-2. More to the point, you're already in a shell with much more dangerous knives
-lying around. You had better trust the scripts you're working with!
+`Ing.invoke` is there for cases of multi-step tasks where you want access to
+both the complete task and the sub-steps: such as mult-step compilation, the 
+classic use-case for `make`.
+
+In fact, if you find yourself needing to use `Ing.invoke` a lot, perhaps you 
+should just use `make`, since the DSL is optimized for exactly this kind of 
+task.
 

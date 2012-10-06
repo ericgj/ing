@@ -1,6 +1,6 @@
 ﻿Ing todo
 ---
-- add RCov to look for other corners that need tests
+- tests for Gemify, Completion
 - incorporate gsub_file patch, patches to Shell
 - nicer error handling for bad input that shows Ing callstack as well as ruby callstack
 - more examples
