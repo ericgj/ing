@@ -1,4 +1,5 @@
-﻿gem 'minitest'
+﻿require 'rubygems'
+gem 'minitest'
 require 'minitest/autorun'
 
 require 'fakeweb'

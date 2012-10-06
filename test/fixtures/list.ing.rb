@@ -8,8 +8,13 @@ module Listing
     def call(*args); end
   end
   
-  class None < Ing::Task
+  class Onerous < Ing::Task
     desc "Sample task that should come up in searches for 'one'"
+    def call(*args); end
+  end
+  
+  class None < Ing::Task
+    desc "Should not come up in searches for 'one'"
     def call(*args); end
   end
   
@@ -47,9 +52,19 @@ module Listing
       desc "Task listing:sub:two"
       def call(*args); end
     end
-    
+ 
+    Three = Proc.new {|*args| }
+    def Three.specify_options(p)
+      p.text "A sample task implemented as a Proc"
+    end
+  
+    class Onerous < Ing::Task
+      desc "Task listing:sub:onerous should come up in searches for 'one'"
+      def call(*args); end
+    end
+
     class None < Ing::Task
-      desc "Task listing:sub:none should come up in searches for 'one'"
+      desc "listing:sub:none should not come up in searches for 'one'"
       def call(*args); end
     end
     
@@ -64,6 +79,9 @@ module Listing
     end  
     
     Three = Proc.new {}
+    
+    class Onerous
+    end
     
     class None
     end

@@ -29,7 +29,8 @@
     # note this does not pick up aliased constants right now
     def ing_commands(base, recurse=false, init={})
       base.constants(false).each do |c|
-        next if base == Object && [:Config].include?(c)  # hack for deprecated ruby modules
+        next if base == Object && 
+          Ing::RUBY_BUILTINS.include?(c) 
         v = base.const_get(c)
         next if init.values.include?(v)
         if v.respond_to?(:constants)

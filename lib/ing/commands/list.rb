@@ -26,6 +26,8 @@
       
       include Ing::CommonOptions
       
+      def namespace; (options[:namespace_given] ? options[:namespace] : nil); end
+      
       attr_accessor :options, :shell
       
       def initialize(options)
@@ -42,7 +44,7 @@
       
       def call(s=nil)
         before
-        if !options[:namespace_given]
+        if !namespace
           search_all s
         else
           search s
@@ -50,7 +52,7 @@
       end
       
       def search(s, recurse=!options[:strict])
-        _say_search(_namespace_class, %r|^#{s}|, recurse)
+        _say_search(_namespace_class, %r|^#{namespace}:#{s}|, recurse)
       end
       
       def search_all(s, recurse=!options[:strict])
@@ -59,7 +61,7 @@
       
       private 
       
-      def _namespace_class(ns=options[:namespace])
+      def _namespace_class(ns=namespace)
         Ing::Util.decode_class(ns)
       end      
             
@@ -88,7 +90,7 @@
       def _search_results(mod, expr, recurse, opts={})
         _filtered_commands(mod, recurse, expr).map do |(cmd, klass)|
           c = CommandPresenter.new(Command.new(klass), cmd)
-          next if !opts[:all] && !c.desc?
+          next if (!opts[:all] && !c.desc?)
           c
         end.compact.sort {|a,b| a.command_line <=> b.command_line}
       end
