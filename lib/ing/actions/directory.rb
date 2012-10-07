@@ -38,6 +38,7 @@ module Ing
     # destination<String>:: the relative path to the destination root.
     # config<Hash>:: give :verbose => false to not log the status.
     #                If :recursive => false, does not look for paths recursively.
+		#                If :mode => :preserve, preserve the file mode from the source.
     #
     # ==== Examples
     #
