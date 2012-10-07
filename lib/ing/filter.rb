@@ -65,7 +65,7 @@ module Ing
 		#
 		def output_file(input_file, ext=nil)
 			return if stdout?
-			basename = ext ? File.basename(input_file).gsub(/\..+$/,ext) :
+			basename = ext ? File.basename(input_file).gsub(/\..+$/, ".#{ext}") :
 			                 File.basename(input_file)
 			File.expand_path(basename, destination_root)
 		end
