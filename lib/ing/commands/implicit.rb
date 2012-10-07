@@ -32,8 +32,10 @@ module Ing
       end
       
       def configure_command(cmd)
-        cmd.shell = shell_class.new if cmd.respond_to?(:"shell=")
-				cmd.shell.base = cmd
+        if cmd.respond_to?(:"shell=")
+					cmd.shell = sh = shell_class.new
+					sh.base = cmd
+				end
       end
       
     end

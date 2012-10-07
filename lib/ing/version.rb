@@ -1,4 +1,4 @@
 module Ing
-  VERSION = '0.2.14'
+  VERSION = '0.2.15'
   VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH = VERSION.split('.')
 end
