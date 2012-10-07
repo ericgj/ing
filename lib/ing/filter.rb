@@ -31,7 +31,7 @@ module Ing
 		
 		def initial_options(given)
 			given[:dest]   ||= Dir.pwd
-			given[:source] ||= Dir.pwd
+			given[:source] ||= given[:dest]
 			self.options = given
 		end
 				
