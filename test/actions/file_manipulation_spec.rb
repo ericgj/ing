@@ -96,6 +96,13 @@ describe Ing::Files do
       exists_and_identical?("doc/README", "doc/README")
     end
 
+    it "copies file from source to default destination and preserves file mode" do
+      action :copy_file, "preserve/script.sh", :mode => :preserve
+      original = File.join(source_root, "preserve/script.sh")
+      copy = File.join(destination_root, "preserve/script.sh")
+      assert_equal File.stat(original).mode, File.stat(copy).mode
+    end
+		
     it "logs status" do
       assert_equal "      create  task.thor\n", action(:copy_file, "task.thor")
     end

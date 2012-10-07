@@ -98,6 +98,13 @@ describe Ing::Files::Directory do
       assert_equal "FOO = FOO\n", File.read(file)
     end
 
+    it "copies directories and preserved file mode" do
+      invoke! "preserve", "preserved", :mode => :preserve
+      original = File.join(source_root, "preserve", "script.sh")
+      copy = File.join(destination_root, "preserved", "script.sh")
+      assert_equal File.stat(original).mode, File.stat(copy).mode
+    end
+		
     it "copies directories" do
       invoke! "doc", "docs"
       file = File.join(destination_root, "docs", "components")

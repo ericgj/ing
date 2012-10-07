@@ -11,6 +11,7 @@ module Ing
     # source<String>:: the relative path to the source root.
     # destination<String>:: the relative path to the destination root.
     # config<Hash>:: give :verbose => false to not log the status.
+    #                :mode => :preserve, to preserve the file mode from the source.
     #
     # ==== Examples
     #
@@ -28,6 +29,10 @@ module Ing
         content = block.call(content) if block
         content
       end
+			if config[:mode] == :preserve
+				mode = File.stat(source).mode
+				chmod(destination, mode, config)
+			end
     end
 
     # Links the file from the relative source to the relative destination. If
