@@ -9,6 +9,7 @@
  'ing/files',
  'ing/task',
  'ing/generator',
+ 'ing/filter',
  'ing/default_command',
  'ing/command',
  'ing/commands/boot',

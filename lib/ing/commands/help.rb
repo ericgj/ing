@@ -31,7 +31,7 @@
       def before
         require_libs
         require_ing_file
-        self.shell = shell_class.new
+        self.shell = shell_class.new; self.shell.base = self
       end
     
       def call(cmd=nil)      

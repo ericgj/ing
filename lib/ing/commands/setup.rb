@@ -24,7 +24,7 @@
 # Or simply overwrite this file.
 
 Dir[File.expand_path("tasks/**/*.rb", File.dirname(__FILE__))].each do |rb|
-  load rb
+  require rb
 end
 
 _____
