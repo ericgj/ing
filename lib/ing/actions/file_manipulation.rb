@@ -29,10 +29,10 @@ module Ing
         content = block.call(content) if block
         content
       end
-			if config[:mode] == :preserve
-				mode = File.stat(source).mode
-				chmod(destination, mode, config)
-			end
+      if config[:mode] == :preserve
+        mode = File.stat(source).mode
+        chmod(destination, mode, config)
+      end
     end
 
     # Links the file from the relative source to the relative destination. If

@@ -42,7 +42,7 @@ module Ing
 
       def configure_command(cmd)
         cmd.shell = shell_class.new if cmd.respond_to?(:"shell=")
-				cmd.shell.base = cmd
+        cmd.shell.base = cmd
       end
       
       private

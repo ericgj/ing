@@ -104,7 +104,7 @@ describe Ing::Files::Directory do
       copy = File.join(destination_root, "preserved", "script.sh")
       assert_equal File.stat(original).mode, File.stat(copy).mode
     end
-		
+    
     it "copies directories" do
       invoke! "doc", "docs"
       file = File.join(destination_root, "docs", "components")

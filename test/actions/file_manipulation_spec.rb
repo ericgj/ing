@@ -102,7 +102,7 @@ describe Ing::Files do
       copy = File.join(destination_root, "preserve/script.sh")
       assert_equal File.stat(original).mode, File.stat(copy).mode
     end
-		
+    
     it "logs status" do
       assert_equal "      create  task.thor\n", action(:copy_file, "task.thor")
     end
